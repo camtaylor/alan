@@ -27,13 +27,44 @@ def question(remaining_words):
     concept_list = [word[0] for word in remaining_words if word[1] != "."]
     concept = " ".join(concept_list)
     current_concept = WikiPage(concept)
-    if len(current_concept.summary) > 0:
+    if len(current_concept.summary) > 0 and "IN" not in dict(remaining_words).values():
       return current_concept.summary
+    # The concept is a nested concept.
+    elif "IN" in dict(remaining_words).values():
+      return nested_concept(remaining_words)
     else:
       #Try urbandictionary after trying wiki.
       slang_term = slang.define_term(concept)
       if slang_term:
         return slang_term[0]
+
+def nested_concept(remaining_words):
+  remaining_words = remove_extraneous_words(remaining_words)
+  in_found = False
+  search_term = ""
+  concept = ""
+  for word in remaining_words:
+    if word[1] == "IN":
+      in_found = True
+    else:
+      if in_found:
+        concept += word[0]
+        concept += " "
+      else:
+        search_term += word[0]
+        search_term += " "
+  concept_base = WikiPage(concept)
+  matching_sentences = " ".join(WikiPage(concept).search(search_term)[:4])
+  return matching_sentences
+
+def remove_extraneous_words(remaining_words):
+  cleaned_words = []
+  for word in remaining_words:
+    if word[1][0] != "D":
+      cleaned_words.append(word)
+  return cleaned_words
+
+
 
 def action(remaining_words):
   print remaining_words
