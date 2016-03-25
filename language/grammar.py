@@ -48,6 +48,7 @@ def imperative(words):
     url = [word for word in words if ".com" in word[0]] 
     print url
     go.open_url(url[0][0])
+    return "Navigating to " + url[0][0]
   return "The verb is " + verb
 
     
