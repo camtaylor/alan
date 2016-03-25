@@ -1,7 +1,7 @@
 import nltk
 from wikipage import WikiPage
 import slang
-
+from actions import go
 
 current_concept = None
 
@@ -10,14 +10,15 @@ def branch(words):
   parts_of_speech =  nltk.pos_tag(tokenized_words)
   leading_word = parts_of_speech[0][1][0]
   if leading_word == 'W':
-    response = question(parts_of_speech[1:])
+    response = interrogative(parts_of_speech[1:])
     return response
   elif leading_word == "V":
-    action(parts_of_speech[1:])
+    response = imperative(parts_of_speech)
+    return response
   else:
     print parts_of_speech
 
-def question(remaining_words):
+def interrogative(remaining_words):
   global current_concept
   leading_word = remaining_words[0][1][0]
   while leading_word == "D" or leading_word == "V":
@@ -37,6 +38,24 @@ def question(remaining_words):
       slang_term = slang.define_term(concept)
       if slang_term:
         return slang_term[0]
+
+def imperative(words):
+  """
+    Handles imperative sentences.
+  """
+  verb = words[0][0]
+  if verb.lower() == "go":
+    url = [word for word in words if ".com" in word[0]] 
+    print url
+    go.open_url(url[0][0])
+  return "The verb is " + verb
+
+    
+
+def declarative(remaining_words):
+  """
+    Handles declarative sentences.
+  """
 
 def nested_concept(remaining_words):
   remaining_words = remove_extraneous_words(remaining_words)

@@ -21,7 +21,7 @@ def speak(response):
   if sys.platform == "darwin":
     command = "echo \"{}\" | say".format(response)
   else:
-    command = "echo \"{}\" | festival --tts".format(responss)
+    command = "echo \"{}\" | festival --tts".format(response)
   os.system(command)
 
 
