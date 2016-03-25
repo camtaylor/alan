@@ -3,6 +3,7 @@ import nltk
 import os
 import re
 from language import grammar
+from senses import ears
 import sys
 
 def listen(words):
@@ -33,4 +34,6 @@ speak("Try asking me something like, \'Who is oprah?\' or \'What is love?\'")
 while True:
   print ""
   words = raw_input(">>> ")
+  if words == "voice":
+    words = ears.ears()  
   listen(words)
