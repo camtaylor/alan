@@ -48,7 +48,8 @@ class WikiPage(object):
               wiki = wiki.replace("/wiki/", "")
               link_dic[title] = wiki
       # Get the url of the main wiki image 
-      self.image_url = soup.select("tr td img")[0]['src'][2:]
+      if soup.select("tr td img") and sou.select("tr td img")[0]:
+        self.image_url = soup.select("tr td img")[0]['src'][2:]
       # If term is generic pick first result save alternatives.
       # The reason we look for : is because of the "May refer to:" for lists.
       if self.summary[-1] == ":":

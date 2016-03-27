@@ -19,6 +19,9 @@ def branch(words):
     print parts_of_speech
 
 def interrogative(remaining_words):
+  """
+    Function that handles interrogative senteces
+  """
   global current_concept
   leading_word = remaining_words[0][1][0]
   while leading_word == "D" or leading_word == "V":
