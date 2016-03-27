@@ -1,7 +1,7 @@
 import webbrowser
 import sys
 import os
-from language import jokes as j
+from language import jokes as joke
 """
 
   This is where alan's actions are stored.
@@ -67,11 +67,26 @@ def manual(sentence):
   1. Go to a website - Say 'go to '
   2. Show an Image - Say 'show me '
   3. Tell a Joke - Say 'tell me a joke'
+  4. Calculate - Say 'find the '
   """
   return "Here is what I can do:" + action_list
 
 def tell_a_joke(sentence):
-  return j.chuck_norris_jokes(sentence)
+  return joke.chuck_norris_jokes(sentence)
+
+def wolfram_alpha(sentence):
+  import wolframalpha
+  app_id ='WX22RG-YHK38JAEWA'
+  client = wolframalpha.Client(app_id)
+  query_list = [x[0] for x in sentence]
+  query_string = ' '.join(query_list)
+  res = client.query(query_string)
+  assert len(res.pods) > 0
+  results = list(res.results)
+  if results:
+    return results[0].text
+  return "Could not find anything"
+
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
@@ -80,6 +95,8 @@ actions_dictionary = {
   "show": display_picture,
   "help": manual,
   "tell": tell_a_joke,
+  "find": wolfram_alpha,
+  # Should be calculate, but voice has a hard time picking it up
 }
 
 
