@@ -1,7 +1,7 @@
 import nltk
 from wikipage import WikiPage
 import slang
-from actions import go
+from actions import actions
 
 current_concept = None
 
@@ -17,6 +17,7 @@ def branch(words):
     return response
   else:
     print parts_of_speech
+
 
 def interrogative(remaining_words):
   """
@@ -42,19 +43,14 @@ def interrogative(remaining_words):
       if slang_term:
         return slang_term[0]
 
+
 def imperative(words):
   """
     Handles imperative sentences.
   """
   verb = words[0][0]
-  if verb.lower() == "go":
-    url = [word for word in words if ".com" in word[0]] 
-    print url
-    go.open_url(url[0][0])
-    return "Navigating to " + url[0][0]
-  return "The verb is " + verb
+  return actions.pick_action(verb, words)
 
-    
 
 def declarative(remaining_words):
   """
