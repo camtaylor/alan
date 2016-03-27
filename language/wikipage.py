@@ -9,18 +9,19 @@ class WikiPage(object):
     """
     #list of tuples if unrefined is true
     def __init__(self, name):
-        self.links = {}
-        self.may_refer_to = []
-        self.name = name
-        self.unrefined = False
-        self.summary = ""
-        self.full_text = ""
-        self.url = "http://simple.wikipedia.org/wiki/{}".format(self.name.replace(" ", "_"))
-        self.get_links(self.url)
+      self.links = {}
+      self.may_refer_to = []
+      self.name = name
+      self.unrefined = False
+      self.summary = ""
+      self.full_text = ""
+      self.image_url = ""
+      self.url = "http://simple.wikipedia.org/wiki/{}".format(self.name.replace(" ", "_"))
+      self.get_links(self.url)
     def get_links(self, url):
       """
-	      Scrapes Wiki page for links contained
-	    """
+        Scrapes Wiki page for links contained
+      """
       #Dictionary to store links inside article.
       link_dic = {}
       try:
@@ -32,7 +33,7 @@ class WikiPage(object):
         else:
           return None
       round = True
-      soup = BeautifulSoup(response.read())
+      soup = BeautifulSoup(response.read(), "html.parser")
       self.summary = self.remove_meta_data(soup('p')[0].getText().encode('ascii', 'ignore').decode('ascii'))
       # Check for error case. Will fix later
       if "free encyclopedia that anyone can change" in self.summary and "simple" in self.url:
@@ -47,6 +48,11 @@ class WikiPage(object):
               wiki = element['href']
               wiki = wiki.replace("/wiki/", "")
               link_dic[title] = wiki
+      # Get the url of the main wiki image
+      image_element = soup.find("a", {"class" : "image"})
+      if image_element:
+        image_tag = image_element.find('img')
+        self.image_url = image_tag['src'][2:] 
       # If term is generic pick first result save alternatives.
       # The reason we look for : is because of the "May refer to:" for lists.
       if self.summary[-1] == ":":

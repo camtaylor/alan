@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 # NOTE: this example requires PyAudio because it uses the Microphone class
 
 import speech_recognition as sr
@@ -12,6 +11,11 @@ def ears():
   with sr.Microphone() as source:
     audio = r.listen(source)
   # recognize speech using Google Speech Recognition
-  return r.recognize_google(audio)
+  try:
+    return r.recognize_google(audio)
+  except sr.UnknownValueError:
+    return "Please speak up."
+  except sr.RequestError as e:
+    return "I do not understand; {0}".format(e)
 
 

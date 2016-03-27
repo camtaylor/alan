@@ -2,7 +2,8 @@ import requests
 import json
 
 def chuck_norris_jokes(name):
-  name_list = name.split(' ')
+  #name_list = name.split(' ')
+  name_list = ("Jimmy", "Fallon")
   print name_list
   if len(name_list) < 2:
     name_list.append("%20")

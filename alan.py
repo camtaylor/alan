@@ -7,10 +7,12 @@ from senses import ears
 import sys
 
 def listen(words):
-  speak(grammar.branch(words))
+  return grammar.branch(words)
+
 
 def think():
   print "Thinking... "
+
 
 def speak(response):
   print response
@@ -26,14 +28,11 @@ def speak(response):
 
 
 speak("Hello my name is Alan.")
-print "..."
-speak("So far I know how to define things well and not much else.")
-print "..."
-speak("Try asking me something like, \'Who is oprah?\' or \'What is love?\'")
 
 while True:
   print ""
   words = raw_input(">>> ")
   if words == "voice":
     words = ears.ears()  
-  listen(words)
+  response = listen(words)
+  speak(response)
