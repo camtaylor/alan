@@ -36,14 +36,29 @@ def open_url(sentence):
     else:
       webbrowser.open(url)
     return "Navigating to " + url
+
+def display_picture(sentence):
+  """
+    Function to send a message.
+  """
+  from language import wikipage
+  concept = " ".join([word[0] for word in sentence if "N" in word[1]])
+  page = wikipage.WikiPage(" ".join([word[0] for word in sentence if "N" in word[1]]))
+  if len(page.image_url) > 0:
+    command = "open http://" + page.image_url
+    os.system(command)
+    return "Here's a " + concept + " picture."
+  else:
+    return "Sorry but I can't find a picture of that." 
+  
   
 
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
-  "go": open_url 
-
+  "go": open_url, 
+  "show": display_picture 
 }
 
 # Picks an action function from the actions_dictionary. Shouldn't need to be altered to add a new function.

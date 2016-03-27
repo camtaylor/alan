@@ -15,6 +15,7 @@ class WikiPage(object):
       self.unrefined = False
       self.summary = ""
       self.full_text = ""
+      self.image_url = ""
       self.url = "http://simple.wikipedia.org/wiki/{}".format(self.name.replace(" ", "_"))
       self.get_links(self.url)
     def get_links(self, url):
@@ -47,9 +48,11 @@ class WikiPage(object):
               wiki = element['href']
               wiki = wiki.replace("/wiki/", "")
               link_dic[title] = wiki
-      # Get the url of the main wiki image 
-      if soup.select("tr td img") and sou.select("tr td img")[0]:
-        self.image_url = soup.select("tr td img")[0]['src'][2:]
+      # Get the url of the main wiki image
+      image_element = soup.find("a", {"class" : "image"})
+      if image_element:
+        image_tag = image_element.find('img')
+        self.image_url = image_tag['src'][2:] 
       # If term is generic pick first result save alternatives.
       # The reason we look for : is because of the "May refer to:" for lists.
       if self.summary[-1] == ":":
