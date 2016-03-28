@@ -56,21 +56,7 @@ def display_picture(sentence):
     os.system(command)
     return "Here's a " + concept + " picture."
   else:
-    return "Sorry but I can't find a picture of that." 
-
-
-def manual(sentence):
-  """
-    Dispatch: help
-    Function to list out the possible actions.
-  """
-  action_list = """
-  1. Go to a website - Say 'go to '
-  2. Show an Image - Say 'show me '
-  3. Tell a Joke - Say 'tell me a joke'
-  4. Calculate - Say 'find the '
-  """
-  return "Here is what I can do:" + action_list
+    return "Sorry but I can't find a picture of that."
 
 
 def tell_a_joke(sentence):
@@ -130,6 +116,17 @@ def recall(sentence):
 # TODO write an action to forget short term memory
 
 
+def manual(sentence):
+  """
+    Dispatch: help
+    Function to list out the possible actions.
+  """
+  global actions_dictionary
+  man_page = ""
+  for key in actions_dictionary.keys():
+    man_page += actions_dictionary[key].__doc__
+  return "Here is what I can do:" + man_page
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -155,4 +152,3 @@ def pick_action(verb, sentence):
     return actions_dictionary[verb](sentence)
   else:
     return "I don't have an action for the verb " + verb
-
