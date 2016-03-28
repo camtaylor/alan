@@ -14,9 +14,15 @@ class Memory(object):
     concept_dict = {}
 
   def remember_concept(self, concept_key, concept_value):
+    """
+      Function stores a memory with a key and value.
+    """
     self.concept_dict[concept_key] = concept_value
 
   def recall_concept(self, concept_key):
+    """
+      Function fetches a memory by key.
+    """
     if concept_key in self.concept_dict.keys():
       return self.concept_dict[concept_key]
 

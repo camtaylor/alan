@@ -6,6 +6,17 @@ from actions import actions
 current_concept = None
 
 def branch(words):
+  """
+    This initial filter of our input sentence.
+    It tokenizes the words and tags the words with parts of speech.
+    It then passes the tokenized and tagged words to 1 of 3 functions.
+    A sentence is either declarative() , interrogative() , or imperative()
+
+    Args:
+      words (String): The words inputted by the user
+    Returns:
+      String: response from one of the three functions that handle type of sentences.
+  """
   tokenized_words =  nltk.word_tokenize(words)
   parts_of_speech =  nltk.pos_tag(tokenized_words)
   leading_word = parts_of_speech[0][1][0]

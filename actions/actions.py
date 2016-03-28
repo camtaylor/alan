@@ -39,7 +39,7 @@ def open_url(sentence):
       command = "open http://" + url
       os.system(command)
     else:
-      webbrowser.open(url)
+      webbrowser.open("http://" + url)
     return "Navigating to " + url
 
 
@@ -52,8 +52,11 @@ def display_picture(sentence):
   concept = " ".join([word[0] for word in sentence if "N" in word[1]])
   page = wikipage.WikiPage(" ".join([word[0] for word in sentence if "N" in word[1]]))
   if len(page.image_url) > 0:
-    command = "open http://" + page.image_url
-    os.system(command)
+    if sys.platform == "darwin":
+      command = "open http://" + page.image_url
+      os.system(command)
+    else:
+      webbrowser.open("http://" + page.image_url)
     return "Here's a " + concept + " picture."
   else:
     return "Sorry but I can't find a picture of that."
@@ -91,9 +94,12 @@ def remember(sentence):
     Function to remember something in short term. Key value storage dict.
   """
   # TODO store a real memory instead of dummy
+  import alan
   global memory
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
-  memory.remember_concept(concept_key, "Dummy memory about " + concept_key)
+  alan.speak("Tell me what you want me to remember.")
+  concept_value = alan.listen()
+  memory.remember_concept(concept_key, concept_value)
   return "I will remember that as '" + concept_key + "'"
 
 
@@ -109,8 +115,12 @@ def recall(sentence):
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
   return memory.recall_concept(concept_key)
 
-# TODO write an action to forget short term memory
+
 def forget(sentence):
+  """
+    Dispatch: forget
+    Function to forget something from memory.
+  """
   global memory
   if len(sentence) == 2 and sentence[1][0] == "all":
     return memory.forget_all()
