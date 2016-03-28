@@ -94,7 +94,7 @@ def remember(sentence):
   global memory
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
   memory.remember_concept(concept_key, "Dummy memory about " + concept_key)
-  return "I will remember that " + concept_key
+  return "I will remember that as '" + concept_key + "'"
 
 
 def recall(sentence):
@@ -103,17 +103,19 @@ def recall(sentence):
     Function to recall something from memory.
   """
   # Check for command recall all
+  global memory
   if len(sentence) == 2 and sentence[1][0] == "all":
     return memory.recall_all()
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
-  concept = memory.recall_concept(concept_key)
-  if concept:
-    return concept
-  else:
-    return "I don't have a short term memory for key " + concept_key
-
+  return memory.recall_concept(concept_key)
 
 # TODO write an action to forget short term memory
+def forget(sentence):
+  global memory
+  if len(sentence) == 2 and sentence[1][0] == "all":
+    return memory.forget_all()
+  concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
+  return memory.forget_concept(concept_key)
 
 
 def manual(sentence):
@@ -137,6 +139,7 @@ actions_dictionary = {
   "find": wolfram_alpha,
   "remember": remember,
   "recall": recall,
+  "forget": forget,
 }
 
 
