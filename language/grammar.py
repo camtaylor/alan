@@ -95,6 +95,5 @@ def remove_extraneous_words(remaining_words):
   return cleaned_words
 
 
-
 def action(remaining_words):
   print remaining_words

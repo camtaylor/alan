@@ -139,6 +139,23 @@ def manual(sentence):
     man_page += actions_dictionary[key].__doc__
   return "Here is what I can do:" + man_page
 
+
+def read_reddit(sentence):
+  """
+    Dispatch: read
+    Function to read reddit.
+    Example: "Read the physics subreddit"
+  """
+  import praw
+  from alan import speak
+  sentence.pop(0)
+  subreddit = "".join([word[0] for word in sentence if 'the' not in word[0].lower() and 'subreddit' not in word[0]])
+  speak("Reading the " + subreddit + " subreddit.")
+  r = praw.Reddit(user_agent='Alan ai experiment')
+  submissions = r.get_subreddit(subreddit).get_hot(limit=10)
+  return " \n".join([str(index + 1)+ " " + submission.title + "." for index, submission in enumerate(submissions)])
+
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -150,6 +167,7 @@ actions_dictionary = {
   "remember": remember,
   "recall": recall,
   "forget": forget,
+  "read": read_reddit,
 }
 
 
