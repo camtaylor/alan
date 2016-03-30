@@ -60,6 +60,6 @@ if __name__ == "__main__":
   """
     Main method should load configurations for alan and initiate interaction loop.
   """
-  speak("Hello my name is alan.")
+  speak("Hello.")
   while True:
     speak(think(listen()))
