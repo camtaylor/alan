@@ -18,6 +18,7 @@ class WikiPage(object):
       self.image_url = ""
       self.url = "http://simple.wikipedia.org/wiki/{}".format(self.name.replace(" ", "_"))
       self.get_links(self.url)
+
     def get_links(self, url):
       """
         Scrapes Wiki page for links contained
@@ -66,15 +67,29 @@ class WikiPage(object):
           self.get_links(self.may_refer_to[0][1])
             #if element.find("a"):
       self.links = link_dic
+
     def remove_meta_data(self, text):
       """
         Cleans text of article.
       """
       text = re.sub('\[.*?\]', '', text)
       return text
+
     def search(self,search_query):
       """
         Searches text of the article and returns a list of matching sentences.
       """
       matched_sentences = re.findall('[A-Z][^\.]*{}[^\.]*\.'.format(search_query), self.full_text, re.IGNORECASE)
       return matched_sentences
+
+    def gender(self):
+      summary_string = self.summary.lower()
+      male_words = [" he ", " his ", " man "]
+      female_words = [" she ", " her ", " woman "]
+      if any(male_word in summary_string for male_word in male_words) and \
+              not any(female_word in summary_string for female_word in female_words):
+
+        return "male"
+      elif not any(male_word in summary_string for male_word in male_words) \
+              and any(female_word in summary_string for female_word in female_words):
+        return "female"

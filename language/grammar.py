@@ -36,7 +36,7 @@ def interrogative(remaining_words):
   """
   global current_concept
   leading_word = remaining_words[0][1][0]
-  while leading_word == "D" or leading_word == "V":
+  while leading_word == "D" or leading_word == "V" and len(remaining_words) > 0:
     remaining_words.pop(0)
     leading_word = remaining_words[0][1][0]
   else:

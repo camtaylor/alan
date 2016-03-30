@@ -2,6 +2,7 @@ import webbrowser
 import sys
 import os
 from language import jokes as joke
+from memory import context
 """
 
   This is where alan's actions are stored.
@@ -22,10 +23,6 @@ from language import jokes as joke
     }
       
 """
-
-from memory import short_term
-memory = short_term.Memory()
-
 
 # Action functions go here
 def open_url(sentence):
@@ -95,7 +92,7 @@ def remember(sentence):
     Function to remember something in short term. Key value storage dict.
   """
   import alan
-  global memory
+  memory = context.short_term_memory
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
   alan.speak("Tell me what you want me to remember.")
   concept_value = alan.listen()
@@ -109,7 +106,7 @@ def recall(sentence):
     Function to recall something from memory.
   """
   # Check for command recall all
-  global memory
+  memory = context.short_term_memory
   if len(sentence) == 2 and sentence[1][0] == "all":
     return memory.recall_all()
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
@@ -121,7 +118,7 @@ def forget(sentence):
     Dispatch: forget
     Function to forget something from memory.
   """
-  global memory
+  memory = context.short_term_memory
   if len(sentence) == 2 and sentence[1][0] == "all":
     return memory.forget_all()
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
