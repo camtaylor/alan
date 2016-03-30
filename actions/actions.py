@@ -26,6 +26,7 @@ from language import jokes as joke
 from memory import short_term
 memory = short_term.Memory()
 
+
 # Action functions go here
 def open_url(sentence):
   """
@@ -93,7 +94,6 @@ def remember(sentence):
     Dispatch: remember
     Function to remember something in short term. Key value storage dict.
   """
-  # TODO store a real memory instead of dummy
   import alan
   global memory
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])

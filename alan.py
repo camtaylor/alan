@@ -16,8 +16,9 @@ def listen():
   """
   print ""
   words = raw_input(">>> ")
-  if words == "voice":
+  if words == "alan" or words == "voice":
     # Makes a call to the google voice api to get words from mic.
+    speak("Yes")
     words = ears.ears()
   return words
 
@@ -59,6 +60,6 @@ if __name__ == "__main__":
   """
     Main method should load configurations for alan and initiate interaction loop.
   """
-  speak("Hello my name is Alan.")
+  speak("Hello my name is alan.")
   while True:
     speak(think(listen()))
