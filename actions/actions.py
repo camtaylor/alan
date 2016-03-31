@@ -153,6 +153,42 @@ def read_reddit(sentence):
   return " \n".join([str(index + 1)+ " " + submission.title + "." for index, submission in enumerate(submissions)])
 
 
+def take_a_nap(sentence):
+  """
+    Dispatch: take
+    Function to stop listening and sleep. Can be awoken on a phrase specified in context.
+    Example: "Take a nap"
+   """
+  from memory import context
+  context.sleeping = True
+  return "Ok, if you want to wake me up say " + context.WAKE_PHRASE + "."
+
+
+def play_music(sentence):
+  """
+    Dispatch: play
+    Function to play music. Requires pianobar which is a Pandora from the terminal.
+    Example: "Play me some music."
+  """
+  # Should eventually spawn a subprocess instead of os.system and use piping.
+  import alan
+  import subprocess
+  alan.speak("Playing music from pandora")
+  if os.path.isfile("~/.config/pianobar/config"):
+    alan.speak("I am loading your credentials and logging you on.")
+  else:
+    alan.speak("You haven't set up a configuration to listen to music. Let's create one.")
+    alan.speak("What is your email address associated with your pandora account?")
+    username = alan.listen()
+    alan.speak("I heard your email address as " + username)
+    alan.speak("Is that correct?")
+    confirmation = "yes" in alan.listen()
+    if confirmation:
+      alan.speak("You answered yes")
+
+  subprocess.call("pianobar", shell=True)
+
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -165,6 +201,8 @@ actions_dictionary = {
   "recall": recall,
   "forget": forget,
   "read": read_reddit,
+  "take" : take_a_nap,
+  "play": play_music,
 }
 
 

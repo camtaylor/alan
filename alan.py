@@ -5,6 +5,7 @@ import re
 from language import grammar
 from senses import ears
 import sys
+from memory import context
 
 def listen():
   """
@@ -44,7 +45,10 @@ def speak(response):
     Returns:
       None
   """
+  # Turn alan's talking context to true.
+  context.talking = True
   print response
+  # think() returns None if no suitable response is found.
   if not response:
     response = "I don't know how to respond to that."
   response = response.encode('ascii', 'ignore')
@@ -52,8 +56,11 @@ def speak(response):
   if sys.platform == "darwin":
     command = "echo \"{}\" | say".format(response)
   else:
+    # Requires festival on linux.
     command = "echo \"{}\" | festival --tts".format(response)
   os.system(command)
+  # Alan is done talking. Set talking context to false.
+  context.talking = False
 
 
 if __name__ == "__main__":
@@ -62,4 +69,14 @@ if __name__ == "__main__":
   """
   speak("Hello.")
   while True:
+
+    if context.sleeping or context.talking:
+      # Process inputs for WAKE_PHRASE, if it matches wake alan up.
+      sleep_input = raw_input(">>>")
+      print sleep_input
+      if sleep_input == context.WAKE_PHRASE:
+        context.sleeping = False
+        speak("I'm awake now.")
+      else:
+        continue
     speak(think(listen()))
