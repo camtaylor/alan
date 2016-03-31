@@ -178,17 +178,48 @@ def play_music(sentence):
     alan.speak("I am loading your credentials and logging you on.")
   else:
     alan.speak("You haven't set up a configuration to listen to music. Let's create one.")
-    alan.speak("What is your email address associated with your pandora account?")
-    username = alan.listen()
-    alan.speak("I heard your email address as " + username)
-    alan.speak("Is that correct?")
-    confirmation = "yes" in alan.listen()
-    if confirmation:
-      alan.speak("You answered yes")
-
+    alan.speak("You will have to log on using the terminal.")
   subprocess.call("pianobar", shell=True)
 
 
+def send_email(sentence):
+  """
+    Dispatch: send
+    Function to send an email.
+    Example: "Send an email."
+  """
+  import smtplib
+  from email.mime.text import MIMEText as text
+  import alan
+  try:
+    # Send the mail.
+    alan.speak("I'm preparing to send an email.")
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    # TODO add alan's email and password here
+    alan.speak("What is your email address")
+    email = alan.listen()
+    alan.speak("What is your password")
+    password = alan.listen()
+    server.login(email, password)
+    alan.speak("Who is the recipient")
+    recipient = alan.listen()
+    alan.speak("What is the message?")
+    message = alan.listen()
+    mime_message = text(message)
+    alan.speak("What is the subject?")
+    mime_message['Subject'] = alan.listen()
+    server.sendmail(email, recipient, mime_message.as_string())
+    server.quit()
+    return "Email sent."
+  except:
+    alan.speak("Something went wrong.")
+    if "gmail" in email:
+      return "Try allowing less secure apps in your gmail settings."
+    else:
+      return "I can't seem to send email right now."
+
+  
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -201,8 +232,9 @@ actions_dictionary = {
   "recall": recall,
   "forget": forget,
   "read": read_reddit,
-  "take" : take_a_nap,
+  "take": take_a_nap,
   "play": play_music,
+  "send": send_email,
 }
 
 
