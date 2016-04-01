@@ -168,19 +168,17 @@ def play_music(sentence):
   """
     Dispatch: play
     Function to play music. Requires pianobar which is a Pandora from the terminal.
+    Also you must set up config file in .config/pianobar/config if you don't want to log on.
     Example: "Play me some music."
   """
-  # Should eventually spawn a subprocess instead of os.system and use piping.
   import alan
-  import subprocess
+  import environment.system
+  # TODO check for config file and add one if not present.
   alan.speak("Playing music from pandora")
-  if os.path.isfile("~/.config/pianobar/config"):
-    alan.speak("I am loading your credentials and logging you on.")
-  else:
-    alan.speak("You haven't set up a configuration to listen to music. Let's create one.")
-    alan.speak("You will have to log on using the terminal.")
-  subprocess.call("pianobar", shell=True)
-
+  environment.system.run_service("pianobar")
+  import time
+  time.sleep(10)
+  alan.listen()
 
 def send_email(sentence):
   """
@@ -191,24 +189,21 @@ def send_email(sentence):
   import smtplib
   from email.mime.text import MIMEText as text
   import alan
+  import language.questions
   try:
     # Send the mail.
     alan.speak("I'm preparing to send an email.")
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     # TODO add alan's email and password here
-    alan.speak("What is your email address")
-    email = alan.listen()
+    email = language.questions.ask_for_email("What is the sender email?")
     alan.speak("What is your password")
-    password = alan.listen()
+    password = "alansendsemails"
     server.login(email, password)
-    alan.speak("Who is the recipient")
-    recipient = alan.listen()
-    alan.speak("What is the message?")
-    message = alan.listen()
+    recipient = language.questions.ask_for_email("What is the recipient email?")
+    message = language.questions.ask_for_text("What is the message?")
     mime_message = text(message)
-    alan.speak("What is the subject?")
-    mime_message['Subject'] = alan.listen()
+    mime_message['Subject'] = language.questions.ask_for_text("What is the subject?")
     server.sendmail(email, recipient, mime_message.as_string())
     server.quit()
     return "Email sent."
@@ -219,7 +214,24 @@ def send_email(sentence):
     else:
       return "I can't seem to send email right now."
 
-  
+def stop_active_processes(sentence):
+  """
+    Dispatch: stop
+    Function to stop running services like music, talking etc.
+    TODO stop a process by name
+
+    Example: "Stop all services.", "Stop all."
+    Future: "Stop the music."
+  """
+  import memory.context
+  for process in memory.context.services:
+    process.kill()
+    print process
+  return "Stopped running services."
+  # Clear services list because the services have been killed.
+  memory.context.services = []
+
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -235,6 +247,7 @@ actions_dictionary = {
   "take": take_a_nap,
   "play": play_music,
   "send": send_email,
+  "stop": stop_active_processes,
 }
 
 

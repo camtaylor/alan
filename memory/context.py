@@ -15,3 +15,6 @@ talking = False
 
 # Constant phrase to wake alan from sleep state. Needs to match a phrase in keyphrase.list if opearating in passive mode.
 WAKE_PHRASE = "wake up"
+
+# This is a list of running background services, the "stop" command will use this to kill processes.
+services = []

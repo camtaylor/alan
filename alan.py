@@ -6,6 +6,7 @@ from language import grammar
 from senses import ears
 import sys
 from memory import context
+import environment.system
 
 def listen():
   """
@@ -54,10 +55,10 @@ def speak(response):
   response = response.encode('ascii', 'ignore')
   #For mac os.
   if sys.platform == "darwin":
-    command = "echo \"{}\" | say".format(response)
+    command = 'echo \"{}\" | say'.format(response)
   else:
     # Requires festival on linux.
-    command = "echo \"{}\" | festival --tts".format(response)
+    command = 'echo \"{}\" | festival --tts'.format(response)
   os.system(command)
   # Alan is done talking. Set talking context to false.
   context.talking = False
