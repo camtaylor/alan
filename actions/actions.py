@@ -231,6 +231,29 @@ def stop_active_processes(sentence):
   # Clear services list because the services have been killed.
   memory.context.services = []
 
+def get_phone_number(sentence):
+  """
+    Dispatch: look up
+    Function to look up via MacOSX address book.
+    TODO: Close address book app after returning
+
+    Example: "Look up Cameron Taylor"
+  """
+  if sys.platform == "darwin":
+    import subprocess
+    query_list = [x[0] for x in sentence[-2:]]
+    query_string = ' '.join(query_list)
+    print "Looking up", query_string
+    script_string = str('tell application "Contacts" to return value of phone of people where name contains "' + query_string +'"')
+    osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    result = osa.communicate(script_string)[0]
+    if len(result)>1:
+      return ("Here is " + query_string + "'s phone number: "+ result.strip())
+    else:
+      return ("Could not find " + query_string)
+  else:
+    return("I do not work for non MacBook devices yet.")
+
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
@@ -248,6 +271,7 @@ actions_dictionary = {
   "play": play_music,
   "send": send_email,
   "stop": stop_active_processes,
+  "look": get_phone_number,
 }
 
 
