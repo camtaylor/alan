@@ -26,8 +26,9 @@ def run_service(command):
      command (String) : command you want to run for the service.
   """
   try:
-    memory.context.services.append(subprocess.Popen(command, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE))
-    return True
+    service = subprocess.Popen(command, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    memory.context.services.append(service)
+    return service
   except:
     return False
 

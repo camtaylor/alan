@@ -2,7 +2,6 @@ import webbrowser
 import sys
 import os
 from language import jokes as joke
-from memory import context
 """
 
   This is where alan's actions are stored.
@@ -92,7 +91,8 @@ def remember(sentence):
     Function to remember something in short term. Key value storage dict.
   """
   import alan
-  memory = context.short_term_memory
+  import memory.context
+  memory = memory.context.short_term_memory
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
   alan.speak("Tell me what you want me to remember.")
   concept_value = alan.listen()
@@ -106,7 +106,8 @@ def recall(sentence):
     Function to recall something from memory.
   """
   # Check for command recall all
-  memory = context.short_term_memory
+  import memory.context
+  memory = memory.context.short_term_memory
   if len(sentence) == 2 and sentence[1][0] == "all":
     return memory.recall_all()
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
@@ -118,7 +119,8 @@ def forget(sentence):
     Dispatch: forget
     Function to forget something from memory.
   """
-  memory = context.short_term_memory
+  import memory.context
+  memory = memory.context.short_term_memory
   if len(sentence) == 2 and sentence[1][0] == "all":
     return memory.forget_all()
   concept_key = " ".join([word[0] for word in sentence if 'N' in word[1]])
@@ -226,10 +228,11 @@ def stop_active_processes(sentence):
   import memory.context
   for process in memory.context.services:
     print process
-    process.terminate()
-  return "Stopped running services."
-  # Clear services list because the services have been killed.
+    process.kill()
+  #Clear services list because the services have been killed.
   memory.context.services = []
+  return "Stopped running services."
+
 
 def get_phone_number(sentence):
   """
@@ -257,9 +260,24 @@ def get_phone_number(sentence):
     return("I do not work for non MacBook devices yet.")
 
 def give_time(sentence):
-  import datetime
-  return ("The time is " + str(datetime.datetime.now().time().strftime("%I:%M %p")))
+  """
+      Dispatch: give
+      Function to give the time.
 
+      Example: "Give me the time."
+    """
+  import datetime
+  return "The time is " + str(datetime.datetime.now().time().strftime("%I:%M %p"))
+
+
+def run_a_plugin(sentence):
+  """
+    Disptach: run
+    Function to run a plugin file.
+  """
+  import plugin_manager.manager
+  # TODO get an actual plugin name instead of hard coding an example.
+  return plugin_manager.manager.open_plugin("example")
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
@@ -279,6 +297,7 @@ actions_dictionary = {
   "stop": stop_active_processes,
   "look": get_phone_number,
   "give": give_time,
+  "run": run_a_plugin,
 }
 
 
