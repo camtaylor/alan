@@ -94,6 +94,9 @@ def remove_extraneous_words(remaining_words):
       cleaned_words.append(word)
   return cleaned_words
 
+def return_nouns(remaining_words):
+  return [x for x in remaining_words if x[1][0] == "N"]
+
 
 def action(remaining_words):
   print remaining_words

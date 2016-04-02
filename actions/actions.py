@@ -225,8 +225,8 @@ def stop_active_processes(sentence):
   """
   import memory.context
   for process in memory.context.services:
-    process.kill()
     print process
+    process.terminate()
   return "Stopped running services."
   # Clear services list because the services have been killed.
   memory.context.services = []
@@ -239,20 +239,26 @@ def get_phone_number(sentence):
 
     Example: "Look up Cameron Taylor"
   """
+  import alan
+  import environment.system
+  import language.grammar
   if sys.platform == "darwin":
-    import subprocess
-    query_list = [x[0] for x in sentence[-2:]]
+    query = language.grammar.return_nouns(sentence)
+    query_list = [x[0] for x in query]
     query_string = ' '.join(query_list)
-    print "Looking up", query_string
-    script_string = str('tell application "Contacts" to return value of phone of people where name contains "' + query_string +'"')
-    osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    result = osa.communicate(script_string)[0]
+    alan.speak("Looking up " + query_string)
+    result = environment.system.run_osa_service('Contacts', 'phone of people where name contains "' + query_string + '"')
+    #
     if len(result)>1:
-      return ("Here is " + query_string + "'s phone number: "+ result.strip())
+      return ("Here are my results for " + query_string + "'s phone number: "+ result.strip())
     else:
       return ("Could not find " + query_string)
   else:
     return("I do not work for non MacBook devices yet.")
+
+def give_time(sentence):
+  import datetime
+  return ("The time is " + str(datetime.datetime.now().time().strftime("%I:%M %p")))
 
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
@@ -272,6 +278,7 @@ actions_dictionary = {
   "send": send_email,
   "stop": stop_active_processes,
   "look": get_phone_number,
+  "give": give_time,
 }
 
 

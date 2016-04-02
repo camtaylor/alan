@@ -47,10 +47,27 @@ def run_callback_service(callback, command):
     service = subprocess.Popen(command, shell=False)
     memory.context.services.append(service)
     service.wait()
-    callback()
+    callback(service)
     return
 
   thread = threading.Thread(target=runInThread, args=(callback, command))
   thread.start()
   # returns immediately after the thread starts
   return thread
+
+def run_osa_service(app_name, command_string):
+  
+  def close_application(app_name):
+    osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
+    osa.communicate('quit app "'+app_name+'"')[0]
+
+  command = str('tell application "{}" to return value of {}'.format(app_name, command_string))
+  try:
+    osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
+    result = osa.communicate(command)[0]
+    close_application(app_name)
+  except:
+    result=""
+  return str(result)
+
+    
