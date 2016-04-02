@@ -19,11 +19,12 @@
 import environment.system
 import os
 import sys
+import alan
 
 run_commands = {
     # word used
     "time": "time.rb",
-    "example": "bash_plugin.sh"
+    "echo": "bash_plugin.sh"
 }
 
 
@@ -33,25 +34,67 @@ system_call = {
     "py": "python",
 }
 
+def interpret(plugin):
+  """
+    Function that interprets plugin data from stdin and writes to stdout.
+
+    Args:
+      plugin (subprocess.Popen): The process running the plugin.
+    Returns:
+      (String) : status of the plugin
+
+    # TODO add timeout to stop plugin if it is non responsive.
+    # TODO I remember reading that stdin.write() and stdout.readline() are not ideal so they will need to be replaced.
+  """
+  while True:
+    line = plugin.stdout.readline()
+    if line != '':
+      # the real code does filtering here
+
+      if ':listen:' in line:
+        plugin.stdin.write(alan.listen() + '\n')
+      if ':speak:' in line:
+        line = line.replace(":speak:", "")
+        line = line.replace(":listen:", "")
+        alan.speak(line)
+      else:
+        print line.rstrip()
+    else:
+      break
+  return "Finished running plugin."
 
 
 def start_plugin(filename):
   """
     In charge of starting plugins Plugins are implemented as services.
+
+    Args:
+      filename (String): The filename of the plugin.
+    Returns:
+      (String) : Status of the plugin.
   """
   extension = filename.split(".")[-1]
   print "The file extension of the plugin is " + extension
   relative_path = "plugins/" + filename
   file_path = os.path.join(os.path.abspath(sys.path[0]), relative_path)
   plugin = environment.system.run_service([system_call[extension], file_path])
-  output = plugin.communicate()[0]
-  # TODO add a plugin manager function that interfaces with the plugin through stdin and stdout.
-  return str(output)
+  if plugin:
+    interpreter_message = interpret(plugin)
+    return interpreter_message
+  else:
+    print file_path
+    return "Plugin was not run."
 
 
 def open_plugin(noun):
   """
     Fetches filename to and passes it to start_plugin().
+
+     Args:
+      noun(String): The noun used to call the plugin
+      Example: "Run the time" where "time" is the noun
+    Returns:
+      (String) : Status of the plugin.
   """
   if noun in run_commands.keys():
     return start_plugin(run_commands[noun])

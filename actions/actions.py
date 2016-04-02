@@ -276,8 +276,9 @@ def run_a_plugin(sentence):
     Function to run a plugin file.
   """
   import plugin_manager.manager
-  # TODO get an actual plugin name instead of hard coding an example.
-  return plugin_manager.manager.open_plugin("example")
+  # Plugins are called with nouns.
+  plugin_name = " ".join(word[0] for word in sentence if word[1][0] == "N")
+  return plugin_manager.manager.open_plugin(plugin_name)
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
