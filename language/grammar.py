@@ -50,9 +50,10 @@ def interrogative(remaining_words):
       return nested_concept(remaining_words)
     else:
       #Try urbandictionary after trying wiki.
-      slang_term = slang.define_term(concept)
-      if slang_term:
-        return slang_term[0]
+      #slang_term = slang.define_term(concept)
+      #if slang_term:
+        #return slang_term[0]
+      return "I don't know"
 
 
 def imperative(words):

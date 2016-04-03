@@ -24,7 +24,8 @@ import alan
 run_commands = {
     # word used
     "time": "time.rb",
-    "echo": "bash_plugin.sh"
+    "echo": "bash_plugin.sh",
+    "count": "count.pl",
 }
 
 
@@ -32,6 +33,7 @@ system_call = {
     "rb": "ruby",
     "sh": "bash",
     "py": "python",
+    "pl": "perl",
 }
 
 def interpret(plugin):
