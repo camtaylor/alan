@@ -56,19 +56,42 @@ def run_callback_service(callback, command):
   # returns immediately after the thread starts
   return thread
 
-def run_osa_service(app_name, command_string):
-  
+def run_osa_service(app_name, command_string, params):
+  """
+    This function is used to run Mac Applescripts.
+
+    Args:
+     String: app_name
+     String: command_string
+     List: params
+    
+    For simple scripts where you are returning a value, use without args:
+      Ex: 'tell application "Contacts" to return value of "phone" ...'
+
+    For more complicated scripts, use params:
+      Ex: 'on run {arg1, arg2} tell application "Messages" ...'
+
+  """
   def close_application(app_name):
     osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
     osa.communicate('quit app "'+app_name+'"')[0]
 
-  command = str('tell application "{}" to return value of {}'.format(app_name, command_string))
-  try:
-    osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
-    result = osa.communicate(command)[0]
-    close_application(app_name)
-  except:
-    result=""
-  return str(result)
+  if len(params) < 1:
+    command = str('tell application "{}" to return value of {}'.format(app_name, command_string))
+    try:
+      osa = subprocess.Popen(['osascript', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
+      result = osa.communicate(command)[0]
+      close_application(app_name)
+    except:
+      result=""
+    return str(result)
+  else:
+    try:
+      osa = subprocess.Popen(['osascript', '-'] +[str(arg) for arg in params], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=False)
+      result = osa.communicate(command_string)
+      close_application(app_name)
+    except:
+      result = ""
+    return str(result)
 
     

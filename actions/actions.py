@@ -245,19 +245,49 @@ def get_phone_number(sentence):
   import alan
   import environment.system
   import language.grammar
+  import language.questions
+
+  def send_imessage(telephone):
+    import string
+    try:
+      # Format phone
+      all_chars = string.maketrans('','')
+      remove_chars = all_chars.translate(all_chars, string.digits)
+      phone = telephone.translate(all_chars, remove_chars)
+      message = language.questions.ask_for_text("What should I say?")
+      result = environment.system.run_osa_service('Messages', """
+        on run {targetPhone, targetMessage}
+          tell application "Messages"
+            set targetService to 1st service whose service type = iMessage
+            set targetContact to buddy targetPhone of targetService
+            send targetMessage to targetContact
+          end tell
+        end run
+      """, [phone, message])
+      return "Message successfully sent"
+    except:
+      alan.speak("Something went wrong.")
+      return ("Could not send message")
+
   if sys.platform == "darwin":
     query = language.grammar.return_nouns(sentence)
     query_list = [x[0] for x in query]
     query_string = ' '.join(query_list)
     alan.speak("Looking up " + query_string)
-    result = environment.system.run_osa_service('Contacts', 'phone of people where name contains "' + query_string + '"')
-    #
+    result = environment.system.run_osa_service( 'Contacts', 'phone of people where name contains "' + query_string + '"', [])
+    print result
     if len(result)>1:
-      return ("Here are my results for " + query_string + "'s phone number: "+ result.strip())
+      alan.speak("Here are my results for " + query_string + "'s phone number: "+ result.strip())
+      further_action = language.questions.ask_for_text("Would you like me to message them?")
+      if 'y' in further_action:
+        return send_imessage(result.strip())
+      else:
+        return "Okay"
     else:
       return ("Could not find " + query_string)
   else:
     return("I do not work for non MacBook devices yet.")
+
 
 def give_time(sentence):
   """
@@ -268,7 +298,6 @@ def give_time(sentence):
     """
   import datetime
   return "The time is " + str(datetime.datetime.now().time().strftime("%I:%M %p"))
-
 
 def run_a_plugin(sentence):
   """
