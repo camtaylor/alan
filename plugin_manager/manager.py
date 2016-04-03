@@ -26,6 +26,7 @@ run_commands = {
     "time": "time.rb",
     "echo": "bash_plugin.sh",
     "count": "count.pl",
+    "stocks": "stocks.sh",
 }
 
 
