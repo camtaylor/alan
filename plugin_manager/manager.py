@@ -23,18 +23,20 @@ import alan
 
 run_commands = {
     # word used
-    "time": "time.rb",
-    "echo": "bash_plugin.sh",
-    "count": "count.pl",
-    "stocks": "stocks.sh",
+  "time": "time.rb",
+  "echo": "bash_plugin.sh",
+  "count": "count.pl",
+  "stocks": "stocks.sh",
+  "music": "music.osa"
 }
 
 
 system_call = {
-    "rb": "ruby",
-    "sh": "bash",
-    "py": "python",
-    "pl": "perl",
+  "rb": "ruby",
+  "sh": "bash",
+  "py": "python",
+  "pl": "perl",
+  "osa": "osascript",
 }
 
 def interpret(plugin):

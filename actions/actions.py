@@ -309,6 +309,7 @@ def run_a_plugin(sentence):
   plugin_name = " ".join(word[0] for word in sentence if word[1][0] == "N")
   return plugin_manager.manager.open_plugin(plugin_name)
 
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -327,7 +328,7 @@ actions_dictionary = {
   "stop": stop_active_processes,
   "look": get_phone_number,
   "give": give_time,
-  "run": run_a_plugin,
+  "run": run_a_plugin
 }
 
 
