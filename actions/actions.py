@@ -2,6 +2,7 @@ import webbrowser
 import sys
 import os
 from language import jokes as joke
+import look
 """
 
   This is where alan's actions are stored.
@@ -233,61 +234,32 @@ def stop_active_processes(sentence):
   memory.context.services = []
   return "Stopped running services."
 
-
-def get_phone_number(sentence):
+def look(sentence):
   """
-    Dispatch: look up
-    Function to look up via MacOSX address book.
-    TODO: Close address book app after returning
+  Dispatch: look
 
-    Example: "Look up Cameron Taylor"
+  Function calls look.py file for methods
   """
-  import alan
-  import environment.system
   import language.grammar
-  import language.questions
-
-  def send_imessage(telephone):
-    import string
-    try:
-      # Format phone
-      all_chars = string.maketrans('','')
-      remove_chars = all_chars.translate(all_chars, string.digits)
-      phone = telephone.translate(all_chars, remove_chars)
-      message = language.questions.ask_for_text("What should I say?")
-      result = environment.system.run_osa_service('Messages', """
-        on run {targetPhone, targetMessage}
-          tell application "Messages"
-            set targetService to 1st service whose service type = iMessage
-            set targetContact to buddy targetPhone of targetService
-            send targetMessage to targetContact
-          end tell
-        end run
-      """, [phone, message])
-      return "Message successfully sent"
-    except:
-      alan.speak("Something went wrong.")
-      return ("Could not send message")
-
-  if sys.platform == "darwin":
-    query = language.grammar.return_nouns(sentence)
-    query_list = [x[0] for x in query]
-    query_string = ' '.join(query_list)
-    alan.speak("Looking up " + query_string)
-    result = environment.system.run_osa_service( 'Contacts', 'phone of people where name contains "' + query_string + '"', [])
-    print result
-    if len(result)>1:
-      alan.speak("Here are my results for " + query_string + "'s phone number: "+ result.strip())
-      further_action = language.questions.ask_for_text("Would you like me to message them?")
-      if 'y' in further_action:
-        return send_imessage(result.strip())
-      else:
-        return "Okay"
+  from look import contacts_search, send_imessage
+  
+  # Available methods in 'look'
+  actions = ['phone', 'email']
+  
+  query = language.grammar.return_nouns(sentence)
+  query_list = [x[0] for x in query]
+  index = [i for i, x in enumerate(query_list) if x in actions]
+  if index:
+    if len(index) == 1:
+      search_term = query_list[index[0]]
     else:
-      return ("Could not find " + query_string)
+      #Default to phone search
+      # TODO: add functionality for multiple queries
+      search_term = "phone"
+    query_list.remove(search_term)
+    contacts_search(search_term, query_list)
   else:
-    return("I do not work for non MacBook devices yet.")
-
+    return("I am not set up to do that yet")
 
 def give_time(sentence):
   """
@@ -326,7 +298,7 @@ actions_dictionary = {
   "play": play_music,
   "send": send_email,
   "stop": stop_active_processes,
-  "look": get_phone_number,
+  "look": look,
   "give": give_time,
   "run": run_a_plugin
 }
