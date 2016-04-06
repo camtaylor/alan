@@ -5,12 +5,16 @@
 
 # List ip addresses on local network
 IP_LIST=$(arp -a | tail -r | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
-
+# tail -r only works on bsd. replace with tac for gnu
+if [[ -z $IP_LIST ]]; then
+IP_LIST=$(arp -a | tac | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
+fi
 echo ":speak:Finding and connecting to your Roku."
 # Walk IP addresses and check port 8060
 for IP in $IP_LIST; do
   echo $IP
-  STATUS=$(nc -v -z -G 2 $IP 8060 &> /dev/null && echo "Online" || echo "Offline")
+  # Check if the port is open to identify roku.
+  STATUS=$(nc -v -z $IP 8060 &> /dev/null && echo "Online" || echo "Offline")
   if [ "$STATUS" == "Online" ]; then
         ROKU_IP=$IP
         break
