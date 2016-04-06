@@ -27,7 +27,8 @@ run_commands = {
   "echo": "bash_plugin.sh",
   "count": "count.pl",
   "stocks": "stocks.sh",
-  "music": "music.osa"
+  "music": "music.osa",
+  "roku": "roku.sh"
 }
 
 
@@ -78,9 +79,11 @@ def start_plugin(filename):
     Returns:
       (String) : Status of the plugin.
   """
-  extension = filename.split(".")[-1]
+  split_filename = filename.split(".")
+  extension = split_filename[-1]
+  directory = split_filename[0]
   print "The file extension of the plugin is " + extension
-  relative_path = "plugins/" + filename
+  relative_path = "plugins/" + directory + "/" + filename
   file_path = os.path.join(os.path.abspath(sys.path[0]), relative_path)
   plugin = environment.system.run_service([system_call[extension], file_path])
   if plugin:
@@ -101,6 +104,7 @@ def open_plugin(noun):
     Returns:
       (String) : Status of the plugin.
   """
+  noun = noun.lower()
   if noun in run_commands.keys():
     return start_plugin(run_commands[noun])
   else:
