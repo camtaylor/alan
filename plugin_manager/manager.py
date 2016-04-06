@@ -24,7 +24,7 @@ import alan
 run_commands = {
     # word used
   "time": "time.rb",
-  "echo": "bash_plugin.sh",
+  "echo": "echo.sh",
   "count": "count.pl",
   "stocks": "stocks.sh",
   "music": "music.osa",
@@ -39,6 +39,24 @@ system_call = {
   "pl": "perl",
   "osa": "osascript",
 }
+
+
+def attach_sphinx(plugin, plugin_directory):
+  """
+    Function that attaches pocketsphinx_continous to a plugin and uses its keyphrase.list.
+  """
+  # TODO finish function and write docs. Currently works but breaks pipe if alan input is used.
+  import subprocess
+  import memory.context
+  keyphrase_list_path = plugin_directory + "keyphrase.list"
+  if os.path.isfile(keyphrase_list_path):
+    print "Keyword list found. Starting pocket sphinx."
+    sphinx_string = "pocketsphinx_continuous -kws " + keyphrase_list_path + " -kws_threshold 1e-1 -inmic yes -logfn /dev/null"
+    print sphinx_string
+    sphinx_command = sphinx_string.split()
+    sphinx = subprocess.Popen(sphinx_command, stdout=plugin.stdin)
+    memory.context.services.append(sphinx)
+
 
 def interpret(plugin):
   """
@@ -58,7 +76,10 @@ def interpret(plugin):
       # the real code does filtering here
 
       if ':listen:' in line:
-        plugin.stdin.write(alan.listen() + '\n')
+        try:
+          plugin.stdin.write(alan.listen() + "\n")
+        except:
+          return "Exiting plugin"
       if ':speak:' in line:
         line = line.replace(":speak:", "")
         line = line.replace(":listen:", "")
@@ -83,10 +104,12 @@ def start_plugin(filename):
   extension = split_filename[-1]
   directory = split_filename[0]
   print "The file extension of the plugin is " + extension
-  relative_path = "plugins/" + directory + "/" + filename
+  plugin_path = "plugins/" + directory
+  relative_path = plugin_path + "/" + filename
   file_path = os.path.join(os.path.abspath(sys.path[0]), relative_path)
   plugin = environment.system.run_service([system_call[extension], file_path])
   if plugin:
+    attach_sphinx(plugin, file_path.replace(filename, ""))
     interpreter_message = interpret(plugin)
     return interpreter_message
   else:

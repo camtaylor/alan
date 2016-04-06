@@ -23,17 +23,18 @@ done
 # Check if ROKU_IP has been found.
 if [[ $ROKU_IP ]] ; then
   echo "The roku ip is " $ROKU_IP
-  echo ":speak::listen:Controls are left,right,up,down,select,play. Enter exit to leave the Roku controller."
+  echo ":speak: Successfully connected to your Roku"
+  echo ":listen:"
   read CONTROLLER
   while [[ $CONTROLLER && "$CONTROLLER" != "exit" ]]
   do
     # Fixed an issue where multiple params were passed. Take last param only
     CONTROLLER=$(echo $CONTROLLER | awk {'print $NF'})
-    curl -d "" $ROKU_IP:8060/keypress/$CONTROLLER
-    echo ":listen:"
+    curl -d "" -s $ROKU_IP:8060/keypress/$CONTROLLER
     echo $CONTROLLER
     read CONTROLLER
   done
+  echo $CONTROLLER
 else
   echo ":speak:Could not connect to your Roku."
 fi
