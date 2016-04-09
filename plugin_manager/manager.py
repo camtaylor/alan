@@ -70,6 +70,7 @@ def interpret(plugin):
     # TODO add timeout to stop plugin if it is non responsive.
     # TODO I remember reading that stdin.write() and stdout.readline() are not ideal so they will need to be replaced.
   """
+  #TODO needs work.
   while True:
     line = plugin.stdout.readline()
     if line != '':
