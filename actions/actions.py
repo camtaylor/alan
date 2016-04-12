@@ -201,7 +201,7 @@ def send_email(sentence):
     # TODO add alan's email and password here
     email = language.questions.ask_for_email("What is the sender email?")
     alan.speak("What is your password")
-    password = "alansendsemails"
+    password = alan.listen()
     server.login(email, password)
     recipient = language.questions.ask_for_email("What is the recipient email?")
     message = language.questions.ask_for_text("What is the message?")
@@ -282,6 +282,15 @@ def run_a_plugin(sentence):
   return plugin_manager.manager.open_plugin(plugin_name)
 
 
+def learn_a_task(sentence):
+  """
+    Dispatch: learn
+    Function to begin learning console.
+  """
+  import learning.learn
+  learning.learn.start_learning(sentence)
+
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -300,7 +309,8 @@ actions_dictionary = {
   "stop": stop_active_processes,
   "look": look,
   "give": give_time,
-  "run": run_a_plugin
+  "run": run_a_plugin,
+  "learn": learn_a_task,
 }
 
 

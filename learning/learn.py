@@ -103,23 +103,27 @@ def get_dependencies(code_string):
   return code_string, variables
 
 
-if __name__ == "__main__":
-  while True:
-    indentation = 0
-    input = raw_input(">>>")
-    lines = newline_characterization(input)
-    keyphrase_lines = replace_keyphrases(lines)
-    blocked_lines = create_blocks(keyphrase_lines)
-    code_string, dependencies = get_dependencies(blocked_lines)
-    print dependencies
-    for dependency in dependencies:
-      code_string = dependency + " = " + "alan.listen()\n" + code_string
-      code_string = "alan.speak(\"What is " + dependency.replace("_", " ") + "?\")\n" + code_string
-    code_string = "import alan\n" + code_string
-    print code_string
-    try:
-      exec(code_string)
-    except:
-      alan.speak("I failed to learn the task")
-
+def start_learning(sentence):
+  """
+    Function to parse a given sentence into python and run through alan.think()
+  """
+  input = ""
+  task = " ".join([word[0] for word in sentence if word[0].lower() != "learn" and word[0] != "how" and word[0] != "to"])
+  indentation = 0
+  alan.speak("How do I  " + task)
+  input = alan.listen()
+  lines = newline_characterization(input)
+  keyphrase_lines = replace_keyphrases(lines)
+  blocked_lines = create_blocks(keyphrase_lines)
+  code_string, dependencies = get_dependencies(blocked_lines)
+  for dependency in dependencies:
+    code_string = dependency + " = " + "alan.listen()\n" + code_string
+    code_string = "alan.speak(\"What is " + dependency.replace("_", " ") + "?\")\n" + code_string
+  code_string = "import alan\n" + code_string
+  print code_string
+  try:
+    exec (code_string)
+    return "Learned to " + task
+  except:
+    return "I failed to learn the task"
 
