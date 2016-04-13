@@ -2,7 +2,7 @@
 import nltk
 import os
 import re
-from language import grammar
+from language import grammar, vocabulary
 from senses import ears
 import sys
 from memory import context
@@ -34,7 +34,10 @@ def think(words):
     Returns:
       String: Returns a response for the given input.
   """
-  return grammar.branch(words)
+  if vocabulary.vocabulary_check(words):
+    return vocabulary.response(words)
+  else:
+    return grammar.branch(words)
 
 
 def speak(response):

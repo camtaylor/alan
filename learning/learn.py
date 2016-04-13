@@ -123,7 +123,7 @@ def start_learning(sentence):
     code_string = dependency + " = " + "alan.listen()\n" + code_string
     code_string = "alan.speak(\"What is " + dependency.replace("_", " ") + "?\")\n" + code_string
   code_string = "import alan\n" + code_string
-  print code_string
+  alan.speak("I'll try to do that now.")
   try:
     exec (code_string)
     should_remember = language.questions.binary_question("Should I remember how to do this?")

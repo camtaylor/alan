@@ -25,8 +25,19 @@ def store_task(key, raw_memory, coded_memory):
 
 
 def recall_all():
+  """
+    Function to simply print the whole MEMORY table.
+  """
   c.execute("SELECT * FROM {}".format(table_name))
   print c.fetchall()
+
+
+def recall_memory(memory_name):
+  """
+    Function to recall a certain memory by NAME column in the MEMORY table.
+  """
+  c.execute("SELECT * FROM {} WHERE NAME = '{}'".format(table_name, memory_name))
+  return c.fetchall()
 
 
 if __name__ == "__main__":
