@@ -1,14 +1,19 @@
 import sqlite3
 import os
 
-
 sqlite_file = os.path.abspath('memory/memories.sqlite')
+#TODO : Change SQLite file to be accessable from anywhere
+
 text_type="TEXT"
 table_name = "MEMORY"
 
 #Connect to DB
 conn = sqlite3.connect(sqlite_file)
 c = conn.cursor()
+
+def database_exists():
+  # Returns true if db is found
+  return os.stat(sqlite_file).st_size > 0
 
 
 def store_task(key, raw_memory, coded_memory):
@@ -40,17 +45,29 @@ def recall_memory(memory_name):
   return c.fetchall()
 
 
-if __name__ == "__main__":
-
+def init_db():
   """
     The main function creates the table if it run.
     TODO this should be moved to another function.
   """
-
   # Create SQLite table
-  c.execute("CREATE TABLE {tn} ({t1} UNIQUE, {t2}, {t3});"\
-    .format(tn=table_name, t1="NAME", t2="RAW", t3="CODE"))
-
+  try:
+    c.execute("CREATE TABLE {tn} ({t1} UNIQUE, {t2}, {t3});"\
+      .format(tn=table_name, t1="NAME", t2="RAW", t3="CODE"))
+  except Exception,e: print str(e)
+  
   #Save
   conn.commit()
+  
+def close_db():
   conn.close()
+
+
+"""
+Vocabulary/ Tasks:
+  Name, Raw, Code 
+
+Personal Pronouns
+  Pronoun, Replacement
+
+"""

@@ -288,7 +288,7 @@ def learn_a_task(sentence):
     Function to begin learning console.
   """
   import learning.learn
-  learning.learn.start_learning(sentence)
+  return learning.learn.start_learning(sentence)
 
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.

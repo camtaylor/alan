@@ -5,7 +5,7 @@ import re
 from language import grammar, vocabulary
 from senses import ears
 import sys
-from memory import context
+from memory import context, store_memories
 import environment.system
 
 def listen():
@@ -23,7 +23,6 @@ def listen():
     speak("Yes")
     words = ears.ears()
   return words
-
 
 def think(words):
   """
@@ -52,10 +51,14 @@ def speak(response):
   # Turn alan's talking context to true.
   context.talking = True
   print response
+
+  # TODO: Mirror personal pronouns (you -> me, me-> you)
+
   # think() returns None if no suitable response is found.
   if not response:
     response = "I don't know how to respond to that."
   response = response.encode('ascii', 'ignore')
+ 
   #For mac os.
   if sys.platform == "darwin":
     command = 'echo \"{}\" | say'.format(response)
@@ -63,6 +66,7 @@ def speak(response):
     # Requires festival on linux.
     command = 'echo \"{}\" | festival --tts'.format(response)
   os.system(command)
+  
   # Alan is done talking. Set talking context to false.
   context.talking = False
 
@@ -71,9 +75,13 @@ if __name__ == "__main__":
   """
     Main method should load configurations for alan and initiate interaction loop.
   """
+  ""
+  # Look for SQLite DB. If not, create it
+  if not store_memories.database_exists():
+    store_memories.init_db()
+
   speak("Hello.")
   while True:
-
     if context.sleeping or context.talking:
       # Process inputs for WAKE_PHRASE, if it matches wake alan up.
       sleep_input = raw_input(">>>")

@@ -61,7 +61,7 @@ def replace_keyphrases(output_list):
         if anded:
           phrase += " and"
       else:
-        phrase = "alan.speak(alan.think(\"" + phrase + "\"))"
+        phrase = "alan.speak(alan.think(\"" + phrase.strip().lower() + "\"))"
       swapped_keyphrases.append(phrase)
   return swapped_keyphrases
 
@@ -110,7 +110,6 @@ def start_learning(sentence):
   """
   import language.questions
   import memory.store_memories
-  input = ""
   task = " ".join([word[0] for word in sentence if word[0].lower() != "learn" and word[0] != "how" and word[0] != "to"])
   indentation = 0
   alan.speak("How do I " + task)
@@ -126,10 +125,12 @@ def start_learning(sentence):
   alan.speak("I'll try to do that now.")
   try:
     exec (code_string)
+    print code_string
     should_remember = language.questions.binary_question("Should I remember how to do this?")
     if should_remember:
-       memory.store_memories.store_task(task, instructions, code_string)
-    return "Learned to " + task
+      memory.store_memories.store_task(task, instructions, code_string)
+      return "Learned to " + task
+    return "I will not remember how to do that"
   except:
     return "I failed to learn the task"
 
