@@ -61,16 +61,17 @@ def command_text():
   Function to get multiple voice commands
   Runs until user says they have completed command
   """
+  from memory import context
   done = False
-  text_block = ""
-  current_block = ""
-
+  text_block = current_block = ""
+  context.talking = True
   while not done:
     if text_block is not "" and current_block is "":
       done = binary_question("Are you done with your command?")
       if not done:
         alan.speak("Please continue")
       else:
+        context.talking = False
         return text_block
     answer = alan.listen()
     current_block = (text_block + " " + answer)
@@ -79,7 +80,6 @@ def command_text():
     if not end_block_command:
       # Do not save text block, redo
       alan.speak("Ok, let's try that again.")
-      done = False
     else:
       # Append to final text block
       current_block = ""

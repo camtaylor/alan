@@ -1,5 +1,3 @@
-
-
 class Memory(object):
   """
     This class is to be used as a global short term memory for Alan.
