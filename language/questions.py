@@ -54,3 +54,36 @@ def ask_for_text(question):
     if not confirmed:
       alan.speak("Ok, let's try that again.")
   return answer
+
+
+def command_text():
+  """
+  Function to get multiple voice commands
+  Runs until user says they have completed command
+  """
+  done = False
+  text_block = ""
+  current_block = ""
+
+  while not done:
+    if text_block is not "" and current_block is "":
+      done = binary_question("Are you done with your command?")
+      if not done:
+        alan.speak("Please continue")
+      else:
+        return text_block
+    answer = alan.listen()
+    current_block = (text_block + " " + answer)
+    alan.speak("Here is what I have: " + current_block)
+    end_block_command = binary_question("Is this correct?")
+    if not end_block_command:
+      # Do not save text block, redo
+      alan.speak("Ok, let's try that again.")
+      done = False
+    else:
+      # Append to final text block
+      current_block = ""
+      text_block = (text_block + " " + answer)
+      
+          
+

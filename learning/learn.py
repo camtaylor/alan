@@ -107,12 +107,13 @@ def start_learning(sentence):
   """
     Function to parse a given sentence into python and run through alan.think()
   """
+  import language.questions
   input = ""
   task = " ".join([word[0] for word in sentence if word[0].lower() != "learn" and word[0] != "how" and word[0] != "to"])
   indentation = 0
-  alan.speak("How do I  " + task)
-  input = alan.listen()
-  lines = newline_characterization(input)
+  alan.speak("How do I " + task)
+  block = language.questions.command_text()
+  lines = newline_characterization(block)
   keyphrase_lines = replace_keyphrases(lines)
   blocked_lines = create_blocks(keyphrase_lines)
   code_string, dependencies = get_dependencies(blocked_lines)
