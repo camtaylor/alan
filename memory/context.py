@@ -17,3 +17,7 @@ WAKE_PHRASE = "wake up"
 
 # This is a list of running background services, the "stop" command will use this to kill processes.
 services = []
+
+# Stop alan from prompting, defaults to false
+no_prompt = False
+

@@ -69,14 +69,14 @@ def ask_for_long_text():
   from memory import context
   done = False
   text_block = current_block = ""
-  context.talking = True
+  context.no_prompt = True
   while not done:
     if text_block is not "" and current_block is "":
       done = binary_question("Is that all?")
       if not done:
         alan.speak("Please continue")
       else:
-        context.talking = False
+        context.no_prompt = False
         return text_block
     answer = alan.listen()
     current_block = (text_block + " " + answer)
@@ -89,6 +89,7 @@ def ask_for_long_text():
       # Append to final text block
       current_block = ""
       text_block = (text_block + " " + answer)
+  context.no_prompt = False
       
           
 
