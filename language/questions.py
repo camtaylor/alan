@@ -45,6 +45,11 @@ def ask_for_email(question):
 
 
 def ask_for_text(question):
+  """
+    Function to get a short amount of text.
+    The user can only input one installment.
+    If you need more text use ask_for_long_text
+  """
   confirmed = False
   while not confirmed:
     alan.speak(question)
@@ -56,10 +61,10 @@ def ask_for_text(question):
   return answer
 
 
-def command_text():
+def ask_for_long_text():
   """
-  Function to get multiple voice commands
-  Runs until user says they have completed command
+  Function to get a longer amount of text.
+  Runs until user says they have completed the input text.
   """
   from memory import context
   done = False
@@ -67,7 +72,7 @@ def command_text():
   context.talking = True
   while not done:
     if text_block is not "" and current_block is "":
-      done = binary_question("Are you done with your command?")
+      done = binary_question("Is that all?")
       if not done:
         alan.speak("Please continue")
       else:

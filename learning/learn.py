@@ -17,6 +17,7 @@ import alan
 
   TODO: Write proper documentation for this file!! Very experimental
 """
+
 command_list = ['while', "if", "until", "for", "say", "otherwise"]
 dependencies = []
 
@@ -108,12 +109,13 @@ def start_learning(sentence):
     Function to parse a given sentence into python and run through alan.think()
   """
   import language.questions
+  import memory.store_memories
   input = ""
   task = " ".join([word[0] for word in sentence if word[0].lower() != "learn" and word[0] != "how" and word[0] != "to"])
   indentation = 0
   alan.speak("How do I " + task)
-  block = language.questions.command_text()
-  lines = newline_characterization(block)
+  instructions = language.questions.ask_for_long_text()
+  lines = newline_characterization(instructions)
   keyphrase_lines = replace_keyphrases(lines)
   blocked_lines = create_blocks(keyphrase_lines)
   code_string, dependencies = get_dependencies(blocked_lines)
@@ -124,6 +126,9 @@ def start_learning(sentence):
   print code_string
   try:
     exec (code_string)
+    should_remember = language.questions.binary_question("Should I remember how to do this?")
+    if should_remember:
+       memory.store_memories.store_task(task, instructions, code_string)
     return "Learned to " + task
   except:
     return "I failed to learn the task"
