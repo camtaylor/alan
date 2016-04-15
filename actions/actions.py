@@ -76,14 +76,21 @@ def wolfram_alpha(sentence):
   import wolframalpha
   app_id ='WX22RG-YHK38JAEWA'
   client = wolframalpha.Client(app_id)
+  # Create query
   query_list = [x[0] for x in sentence]
   query_string = ' '.join(query_list)
+  # Query wolframalpha
   res = client.query(query_string)
-  assert len(res.pods) > 0
-  results = list(res.results)
-  if results:
-    return results[0].text
-  return "Could not find anything"
+  if len(res.pods) == 0:
+    return "I could not find the answer."
+  response_text = ""
+  for pod in res:
+    if hasattr(pod, 'primary'):
+      response_text += pod.title + "\n"
+      response_text += pod.text
+  if len(response_text) > 0:
+    return response_text
+  return "I could not find the answer."
 
 
 def remember(sentence):
