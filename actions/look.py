@@ -1,5 +1,9 @@
 def send_imessage(telephone):
   import string
+  import language.grammar
+  import language.questions
+  import environment.system
+
   try:
     # Format phone
     all_chars = string.maketrans('','')
@@ -17,6 +21,7 @@ def send_imessage(telephone):
     """, [phone, message])
     return "Message successfully sent"
   except:
+    import alan
     alan.speak("Something went wrong.")
     return ("Could not send message")
 

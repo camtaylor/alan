@@ -259,14 +259,13 @@ def look(sentence):
   if index:
     if len(index) == 1:
       search_term = query_list[index[0]]
-    else:
-      #Default to phone search
-      # TODO: add functionality for multiple queries
-      search_term = "phone"
-    query_list.remove(search_term)
-    contacts_search(search_term, query_list)
+      query_list.remove(search_term)
   else:
-    return("I am not set up to do that yet")
+    #Default to phone search
+    # TODO: add functionality for multiple queries
+    search_term = "phone"
+  contacts_search(search_term, query_list)
+  
 
 def give_time(sentence):
   """
