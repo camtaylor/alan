@@ -17,11 +17,13 @@ def listen():
       String: Words input from the user.
   """
   print ""
-  words = raw_input(">>> ")
+  words = raw_input(">>> ").strip()
   if words == "alan" or words == "voice":
     # Makes a call to the google voice api to get words from mic.
     speak("Yes")
     words = ears.ears()
+  elif words.isdigit():
+    words = int(words)
   return words
 
 def think(words):

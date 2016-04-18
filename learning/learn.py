@@ -23,14 +23,22 @@ dependencies = []
 
 def newline_characterization(input):
   """
-    Trys to break the dictation into lines based on keywords and verbs.
+    Tries to break the dictation into lines based on keywords and verbs.
+    If the special word "get" exists we know a variable assignment exists and
+    we add the next verb phrase to the line.
   """
   output_list = []
   word_list = nltk.pos_tag(nltk.word_tokenize(input))
+  variable_assignment = False
   for word in word_list:
-    if word[0] in command_list or word[1] == 'VB':
+    if (word[0] in command_list or word[1] == 'VB') and not variable_assignment:
+      if word[0] == "get":
+        variable_assignment = True
       output_list.append(word[0])
     else:
+      if 'VB' in word[1]:
+        variable_assignment = False
+
       if len(output_list) > 0:
         output_list[-1] += " " + word[0]
       else:
@@ -45,8 +53,12 @@ def replace_keyphrases(output_list):
   swapped_keyphrases = []
   for phrase in output_list:
     if phrase.split()[0] != "say" and phrase.split()[0] in command_list:
+      if "is divisible by" in phrase:
+        phrase += " == 0"
       swapped_keyphrases.append(phrase.replace("is greater than", ">").replace("is less than", "<")\
-                              .replace("is equal to", "==").replace("is in", "in").replace(" is ", " == ").replace("until", "while not")\
+                              .replace("is divisible by", "%")\
+                              .replace("is equal to", "==").replace("is in", "in")\
+                              .replace("until", "while not")\
                               .replace("otherwise", "else").replace("equals", "=="))
     else:
       anded = False
@@ -101,7 +113,7 @@ def get_dependencies(code_string):
   variables = [match.replace(" ", "_") for match in matches]
   for index, match in enumerate(matches):
     code_string = code_string.replace(match, variables[index])
-  return code_string, variables
+  return code_string, list(set(variables))
 
 
 def start_learning(sentence):
@@ -111,8 +123,12 @@ def start_learning(sentence):
   import language.questions
   import memory.store_memories
   task = " ".join([word[0] for word in sentence if word[0].lower() != "learn" and word[0] != "how" and word[0] != "to"])
+  alan_response = "How do I "
+  if "respond" in task:
+    alan_response += "respond to"
+    task = task.replace("respond", "")
   indentation = 0
-  alan.speak("How do I " + task)
+  alan.speak(alan_response + task)
   instructions = language.questions.ask_for_long_text()
   lines = newline_characterization(instructions)
   keyphrase_lines = replace_keyphrases(lines)
@@ -123,12 +139,12 @@ def start_learning(sentence):
     code_string = "alan.speak(\"What is " + dependency.replace("_", " ") + "?\")\n" + code_string
   code_string = "import alan\n" + code_string
   alan.speak("I'll try to do that now.")
+  print code_string
   try:
     exec (code_string)
-    print code_string
     should_remember = language.questions.binary_question("Should I remember how to do this?")
     if should_remember:
-      memory.store_memories.store_task(task, instructions, code_string)
+      memory.store_memories.store_task(task.strip(), instructions, code_string)
       return "Learned to " + task
     return "I will not remember how to do that"
   except:
