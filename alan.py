@@ -91,4 +91,11 @@ if __name__ == "__main__":
         speak("I'm awake now.")
       else:
         continue
-    speak(think(listen()))
+    # Try to execute statement and catch an error. Exit on KeyboardInterrupt.
+    try:
+      speak(think(listen()))
+    except KeyboardInterrupt:
+      speak("Shutting down.")
+      exit()
+    except:
+      speak("Something went wrong. I can't do that right now.")
