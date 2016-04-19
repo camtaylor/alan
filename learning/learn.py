@@ -22,6 +22,16 @@ command_list = ['while', "if", "until", "for", "say", "otherwise", "get"]
 dependencies = []
 defined_variables = []
 
+def lemmatize_phrase(output_list):
+  """
+  Takes list of commands and adjusts tense 
+  """
+  from nltk.stem.wordnet import WordNetLemmatizer
+  # List of words we do not want to change
+  no_changes = ["is", "be"]
+  lem = [(WordNetLemmatizer().lemmatize(word[0], 'v'), word[1]) if 'VB' in word[1] and word[0] not in no_changes else word for word in output_list]
+  return lem
+
 def newline_characterization(input):
   """
     Tries to break the dictation into lines based on keywords and verbs.
@@ -31,7 +41,8 @@ def newline_characterization(input):
   output_list = []
   word_list = nltk.pos_tag(nltk.word_tokenize(input))
   variable_assignment = False
-  for word in word_list:
+  lemmatize = lemmatize_phrase(word_list)
+  for word in lemmatize:
     if (word[0] in command_list or word[1] == 'VB') and not variable_assignment:
       if word[0] == "get":
         variable_assignment = True
