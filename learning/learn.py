@@ -18,7 +18,7 @@ import alan
   TODO: Write proper documentation for this file!! Very experimental
 """
 
-command_list = ['while', "if", "until", "for", "say", "otherwise"]
+command_list = ['while', "if", "until", "for", "say", "otherwise", "get"]
 dependencies = []
 defined_variables = []
 
@@ -37,9 +37,11 @@ def newline_characterization(input):
         variable_assignment = True
       output_list.append(word[0])
     else:
+      if word[0] in command_list:
+        output_list.append(word[0])
+        continue
       if 'VB' in word[1]:
         variable_assignment = False
-
       if len(output_list) > 0:
         output_list[-1] += " " + word[0]
       else:
@@ -132,7 +134,7 @@ def substitute_variables(code_string):
     Example:
       "This is the_variable example" --> "This is " + the_variable + "example"
   """
-  return  re.sub(r'(\")(.+?(?=the_))(the_[^ ]*)([^\"]*)(\")', r'\1\2"+str(\3)+"\4\5', code_string)
+  return  re.sub(r'(\")(.+?(?=the_))(the_[^ ,^\"]*)([^\"]*)(\")', r'\1\2"+str(\3)+"\4\5', code_string)
 
 
 def start_learning(sentence):
