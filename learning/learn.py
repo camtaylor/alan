@@ -20,6 +20,7 @@ import alan
 
 command_list = ['while', "if", "until", "for", "say", "otherwise"]
 dependencies = []
+defined_variables = []
 
 def newline_characterization(input):
   """
@@ -52,6 +53,15 @@ def replace_keyphrases(output_list):
   """
   swapped_keyphrases = []
   for phrase in output_list:
+    # The word get denotes variable assignment.
+    if phrase.split()[0] == "get":
+      phrase = phrase.replace("get ", "")
+      phrase_list = phrase.split("by")
+      # TODO needs lemmatization before surrounding with alan.think()
+      phrase_list[-1] = "alan.think(\"" + phrase_list[-1] + "\")"
+      defined_variables.append(phrase_list[0].strip().replace(" ", "_"))
+      swapped_keyphrases.append(phrase_list[0] + "= " + phrase_list[-1])
+      continue
     if phrase.split()[0] != "say" and phrase.split()[0] in command_list:
       if "is divisible by" in phrase:
         phrase += " == 0"
@@ -116,6 +126,15 @@ def get_dependencies(code_string):
   return code_string, list(set(variables))
 
 
+def substitute_variables(code_string):
+  """
+    This function uses a regex to look for variables and subs them in to functions.
+    Example:
+      "This is the_variable example" --> "This is " + the_variable + "example"
+  """
+  return  re.sub(r'(\")(.+?(?=the_))(the_[^ ]*)([^\"]*)(\")', r'\1\2"+str(\3)+"\4\5', code_string)
+
+
 def start_learning(sentence):
   """
     Function to parse a given sentence into python and run through alan.think()
@@ -135,10 +154,12 @@ def start_learning(sentence):
   blocked_lines = create_blocks(keyphrase_lines)
   code_string, dependencies = get_dependencies(blocked_lines)
   for dependency in dependencies:
-    code_string = dependency + " = " + "alan.listen()\n" + code_string
-    code_string = "alan.speak(\"What is " + dependency.replace("_", " ") + "?\")\n" + code_string
+    if dependency not in defined_variables:
+      code_string = dependency + " = " + "alan.listen()\n" + code_string
+      code_string = "alan.speak(\"What is " + dependency.replace("_", " ") + "?\")\n" + code_string
   code_string = "import alan\n" + code_string
   alan.speak("I'll try to do that now.")
+  code_string = substitute_variables(code_string)
   print code_string
   try:
     exec (code_string)

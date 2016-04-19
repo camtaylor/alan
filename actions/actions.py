@@ -86,7 +86,6 @@ def wolfram_alpha(sentence):
   response_text = ""
   for pod in res:
     if hasattr(pod, 'primary'):
-      response_text += pod.title + "\n"
       response_text += pod.text
   if len(response_text) > 0:
     return response_text
