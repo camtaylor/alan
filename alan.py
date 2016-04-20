@@ -99,5 +99,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
       speak("Shutting down.")
       exit()
-    except:
+    except Exception,e:
+      print e
       speak("Something went wrong. I can't do that right now.")

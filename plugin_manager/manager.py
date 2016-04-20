@@ -28,7 +28,8 @@ run_commands = {
   "count": "count.pl",
   "stocks": "stocks.sh",
   "music": "music.osa",
-  "roku": "roku.sh"
+  "roku": "roku.sh",
+  "fibonacci": "fibonacci.cpp"
 }
 
 
@@ -38,6 +39,7 @@ system_call = {
   "py": "python",
   "pl": "perl",
   "osa": "osascript",
+  "cpp": "compile",
 }
 
 
@@ -92,6 +94,20 @@ def interpret(plugin):
   return "Finished running plugin."
 
 
+def compile_and_run(file_path, filename, extension):
+  """
+    Function to compile and run plugins that are not interpretted languages.
+  """
+  # TODO replace os.system with some other call to system like subprocess.
+  import os
+  if extension == "cpp":
+    print file_path
+    plugin_path = file_path.replace(filename, "plugin")
+    os.system("g++ {} -o {}".format(file_path, plugin_path))
+    plugin = environment.system.run_service(plugin_path)
+    return plugin
+
+
 def start_plugin(filename):
   """
     In charge of starting plugins Plugins are implemented as services.
@@ -108,7 +124,11 @@ def start_plugin(filename):
   plugin_path = "plugins/" + directory
   relative_path = plugin_path + "/" + filename
   file_path = os.path.join(os.path.abspath(sys.path[0]), relative_path)
-  plugin = environment.system.run_service([system_call[extension], file_path])
+  if system_call[extension] != "compile":
+    plugin = environment.system.run_service([system_call[extension], file_path])
+  else:
+    plugin = compile_and_run(file_path, filename, extension)
+  # Test if the plugin is exists.
   if plugin:
     attach_sphinx(plugin, file_path.replace(filename, ""))
     interpreter_message = interpret(plugin)
