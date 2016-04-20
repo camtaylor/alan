@@ -96,6 +96,11 @@ def replace_keyphrases(output_list):
         if anded:
           phrase += " and"
       else:
+        if phrase.split()[-1] == "and":
+          # Adding an and will keep the current indentation
+          phrase = phrase.split()
+          phrase.pop()
+          phrase = " ".join(phrase)
         phrase = "alan.speak(alan.think(\"" + phrase.strip().lower() + "\"))"
       swapped_keyphrases.append(phrase)
   return swapped_keyphrases
