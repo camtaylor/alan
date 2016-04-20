@@ -80,7 +80,7 @@ def interpret(plugin):
 
       if ':listen:' in line:
         try:
-          plugin.stdin.write(alan.listen() + "\n")
+          plugin.stdin.write(str(alan.listen()) + "\n")
         except:
           return "Exiting plugin"
       if ':speak:' in line:
