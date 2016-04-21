@@ -2,7 +2,7 @@ from yandex_translate import YandexTranslate
 import language_codes
 
 if __name__ == "__main__":
-  translate = YandexTranslate('trnsl.1.1.20160420T042838Z.0193c4312e09c1cf.28565b33bc14f4fa16679cf7e0315dfa81d66166')
+  translate = YandexTranslate('')
   print ":speak: What do you want to translate?"
   print ":listen:"
   message = raw_input()
