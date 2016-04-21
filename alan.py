@@ -102,3 +102,4 @@ if __name__ == "__main__":
     except Exception,e:
       print e
       speak("Something went wrong. I can't do that right now.")
+      exit()

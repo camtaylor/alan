@@ -29,7 +29,8 @@ run_commands = {
   "stocks": "stocks.sh",
   "music": "music.osa",
   "roku": "roku.sh",
-  "fibonacci": "fibonacci.cpp"
+  "fibonacci": "fibonacci.cpp",
+  "translator": "translator.py"
 }
 
 
@@ -125,7 +126,10 @@ def start_plugin(filename):
   relative_path = plugin_path + "/" + filename
   file_path = os.path.join(os.path.abspath(sys.path[0]), relative_path)
   if system_call[extension] != "compile":
-    plugin = environment.system.run_service([system_call[extension], file_path])
+    if extension == "py":
+      plugin = environment.system.run_service([system_call[extension], "-u", file_path])
+    else:
+      plugin = environment.system.run_service([system_call[extension], file_path])
   else:
     plugin = compile_and_run(file_path, filename, extension)
   # Test if the plugin is exists.
