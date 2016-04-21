@@ -1,7 +1,6 @@
 import cv, cv2
-import sys, os
+import sys, os, time
 import numpy as np
-import time
 
 path = "profiles/"
 
@@ -13,11 +12,12 @@ def get_images(path, size):
     Tuple: size (height, width)
   Returns:
     faces: List of faces found
-    count_tally: index location
+    labels: index location
   """
   count = 0
-  faces = []
-  labels = []
+  faces, labels = [], []
+
+  # Walk /profiles directory and append faces
   for filename in os.listdir(path):
     if filename.endswith('.jpg') or filename.endswith('.png'): 
       try:
@@ -35,19 +35,19 @@ def get_images(path, size):
   return faces, labels
 
 def create_eigen():
+  """
+  Creates EigenFaceRecognizer object and trains the model into 'eigenModel.xml'
+  """
   current_faces, current_count = get_images(path, (256,256))
   current_count_array = np.asarray(current_count, dtype=np.int32)
   model = cv2.createEigenFaceRecognizer()
+  
   # Retrain
-  retrain(model, current_faces, current_count_array)
-
-def retrain(eigen, cf, cca):
-  eigen.train(np.asarray(cf), np.asarray(cca))
-  eigen.save("eigenModel.xml")
-  print "successful update"
+  model.train(np.asarray(current_faces, np.asarray(current_count_array))
+  model.save("eigenModel.xml")
 
 if __name__ in "__main__":
-  
+  # Repeat until image found
   while True:
     model = cv2.createEigenFaceRecognizer(threshold=100000.0) # Not perfect but pretty close match
     
@@ -56,8 +56,10 @@ if __name__ in "__main__":
       create_eigen()
     model.load('eigenModel.xml')
 
+    # Capture video from webcam
     video_capture = cv2.VideoCapture(0)
     _ , frame = video_capture.read()
+    #Convert to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Write Image 
@@ -66,18 +68,15 @@ if __name__ in "__main__":
 
     # Look through and find match
     label, confidence = model.predict(resized_image)
-    print "Predicted Label = %d\nConfidence = %.2f" % (label, confidence/100)
 
     if label > -1 and (confidence/100) > 150:
       print "I see you with a confidence of: %.2f on label %d" % (confidence/100, label)
-      # Sleep for 5 seconds
-      time.sleep(5)
+      # Kill application TODO: return
+      exit()
     else:
-      print "Couldn't find"
-      print "adding to memory..."
+      print "Couldn't find\nadding to profiles"
+      # Reload EigenModel
       create_eigen()
       model.load('eigenModel.xml')
       # Sleep for 2 seconds then retry
       time.sleep(2)
-
-  
