@@ -1,13 +1,24 @@
 import cv2
 import sys, os
 import numpy as np
-import time
 
-
+# Variables
 cascade_path = "facecascade.xml"
 cascade = cv2.CascadeClassifier(cascade_path)
 
 class Existing_Images:
+  """
+  Currently stores recognized faces and labels, respectivly
+  Attr:
+    List: faces, labels
+    String: path
+    LBPHFaceRecognizer: current_recognizer
+
+  Methods:
+    find_faces: Finds all current faces in /profiles
+    recognizer: instantiates and trains FaceRecognizer
+
+  """
   faces, labels = [], []
   path = "profiles/"
   current_recognizer = None 
@@ -21,12 +32,19 @@ class Existing_Images:
 
   def recognizer(self):
     """
-    Creates new EigenFaceRecognizer
+    Creates new FaceRecognizer using Local Binary Patterns (LBP)
     """
     self.current_recognizer = cv2.createLBPHFaceRecognizer()
     self.current_recognizer.train(self.faces, np.array(self.labels))
 
 def convert_image(image, filename):
+  """
+  Converts given image and transforms the size to 256x256 pixels and grayscales
+  Creates new file with filename with '_bw' appended
+  Removes existing file 
+
+  Returns: image
+  """
   new_image = cv2.resize(image, (256,256))
   gray = cv2.cvtColor(new_image, cv2.COLOR_BGR2GRAY)
   new_filename = filename.split('.')
@@ -121,10 +139,6 @@ if __name__ in "__main__":
   if not predict and len(captured_faces) > 0:
     var = raw_input("Add face to profiles? ")
     if "y" in var:
+      # Write first file into /profiles
       new_filename = "profiles/temp"+str(int(len(images.labels)))+"_bw.jpg"
       cv2.imwrite(new_filename, image)
-
-
-
-
-  
