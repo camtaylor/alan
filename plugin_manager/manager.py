@@ -30,7 +30,8 @@ run_commands = {
   "music": "music.osa",
   "roku": "roku.sh",
   "fibonacci": "fibonacci.cpp",
-  "translator": "translator.py"
+  "translator": "translator.py",
+  "hello": "HelloWorld.java"
 }
 
 
@@ -41,6 +42,7 @@ system_call = {
   "pl": "perl",
   "osa": "osascript",
   "cpp": "compile",
+  "java": "compile"
 }
 
 
@@ -101,12 +103,19 @@ def compile_and_run(file_path, filename, extension):
   """
   # TODO replace os.system with some other call to system like subprocess.
   import os
+  import time
+
   if extension == "cpp":
-    print file_path
     plugin_path = file_path.replace(filename, "plugin")
     os.system("g++ {} -o {}".format(file_path, plugin_path))
     plugin = environment.system.run_service(plugin_path)
     return plugin
+  elif extension == "java":
+    os.system("javac {}".format(file_path))
+    plugin = environment.system.run_service(["java", "-cp", file_path.replace(filename, ""), filename.split(".")[0]])
+    print filename.split(".")[0]
+    return plugin
+
 
 
 def start_plugin(filename):
@@ -120,7 +129,7 @@ def start_plugin(filename):
   """
   split_filename = filename.split(".")
   extension = split_filename[-1]
-  directory = split_filename[0]
+  directory = split_filename[0].lower()
   print "The file extension of the plugin is " + extension
   plugin_path = "plugins/" + directory
   relative_path = plugin_path + "/" + filename
