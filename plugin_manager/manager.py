@@ -20,6 +20,7 @@ import environment.system
 import os
 import sys
 import alan
+import threading
 
 run_commands = {
     # word used
@@ -31,7 +32,8 @@ run_commands = {
   "roku": "roku.sh",
   "fibonacci": "fibonacci.cpp",
   "translator": "translator.py",
-  "hello": "HelloWorld.java"
+  "hello": "HelloWorld.java",
+  "background": "background.sh",
 }
 
 
@@ -45,6 +47,18 @@ system_call = {
   "java": "compile"
 }
 
+
+def attach_notification_listener(plugin):
+  """
+
+  """
+  while True:
+    line = plugin.stdout.readline()
+    if line != '':
+      if ":notify:" in line:
+        alan.speak(line.replace(":notify:", ""))
+    else:
+      break
 
 def attach_sphinx(plugin, plugin_directory):
   """
@@ -68,30 +82,38 @@ def interpret(plugin):
     Function that interprets plugin data from stdin and writes to stdout.
 
     Args:
-      plugin (subprocess.Popen): The process running the plugin.
+      plugin (subprocess.Popen object): The process running the plugin.
     Returns:
       (String) : status of the plugin
 
     # TODO add timeout to stop plugin if it is non responsive.
     # TODO I remember reading that stdin.write() and stdout.readline() are not ideal so they will need to be replaced.
   """
-  #TODO needs work.
+  #TODO should be migrated to a class. Also it will eventually handle many commands other than :speak: and :listen:
   while True:
     line = plugin.stdout.readline()
     if line != '':
-      # the real code does filtering here
 
       if ':listen:' in line:
         try:
           plugin.stdin.write(str(alan.listen()) + "\n")
         except:
           return "Exiting plugin"
+
       if ':speak:' in line:
         line = line.replace(":speak:", "")
         line = line.replace(":listen:", "")
         alan.speak(line)
+
+      if ':release:' in line:
+        # The plugin goes into background mode and spawns a notification_listener thread.
+        background_listener = threading.Thread(target=attach_notification_listener, args=[plugin])
+        background_listener.start()
+        return "Plugin is now running in the background."
+
       else:
         print line.rstrip()
+
     else:
       break
   return "Finished running plugin."
@@ -166,3 +188,13 @@ def open_plugin(noun):
     return start_plugin(run_commands[noun])
   else:
     return "I can't find a plugin for " + noun
+
+def reconnect_plugin():
+  """
+    Function to reconnect a plugin to the interpreter after it has been running in the background.
+  """
+  # TODO actually find a certain service by name rather than grabbing the 0 index from services.
+  import memory.context
+  if len(memory.context.services) == 0:
+    return
+  interpret(memory.context.services[0])

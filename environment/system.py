@@ -27,6 +27,7 @@ def run_service(command):
   """
   try:
     service = subprocess.Popen(command, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    # TODO give the service a name so it can be referenced later. Tuple
     memory.context.services.append(service)
     return service
   except:
