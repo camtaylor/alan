@@ -34,6 +34,7 @@ run_commands = {
   "translator": "translator.py",
   "hello": "HelloWorld.java",
   "background": "background.sh",
+  "server": "server.js"
 }
 
 
@@ -44,7 +45,8 @@ system_call = {
   "pl": "perl",
   "osa": "osascript",
   "cpp": "compile",
-  "java": "compile"
+  "java": "compile",
+  "js": "node"
 }
 
 
