@@ -52,7 +52,10 @@ system_call = {
 
 def attach_notification_listener(plugin):
   """
+    When a plugin calls :release: the notification listener reads the plugin stdout for  :notify: command.
 
+    Args:
+      plugin (subprocess.Popen): The plugin that the notification listener is attached to.
   """
   while True:
     line = plugin.stdout.readline()
@@ -65,8 +68,9 @@ def attach_notification_listener(plugin):
 def attach_sphinx(plugin, plugin_directory):
   """
     Function that attaches pocketsphinx_continous to a plugin and uses its keyphrase.list.
+    If a developer includes a keyphrase.list this will be automatically called.
   """
-  # TODO finish function and write docs. Currently works but breaks pipe if alan input is used.
+  # TODO finish function and write docs.
   import subprocess
   import memory.context
   keyphrase_list_path = plugin_directory + "keyphrase.list"
@@ -88,8 +92,7 @@ def interpret(plugin):
     Returns:
       (String) : status of the plugin
 
-    # TODO add timeout to stop plugin if it is non responsive.
-    # TODO I remember reading that stdin.write() and stdout.readline() are not ideal so they will need to be replaced.
+    # TODO I remember reading that stdin.write() and stdout.readline() is not ideal so they might need to be replaced.
   """
   #TODO should be migrated to a class. Also it will eventually handle many commands other than :speak: and :listen:
   while True:
@@ -124,8 +127,15 @@ def interpret(plugin):
 def compile_and_run(file_path, filename, extension):
   """
     Function to compile and run plugins that are not interpretted languages.
+
+    Args:
+      file_path (String): absolute path to plugin file.
+      filename (String): name of the file.
+      extension (String): extension of the file like py or java
+    Returns:
+      (subrocess.Popen) The plugin started as a subprocess.
   """
-  # TODO replace os.system with some other call to system like subprocess.
+  # TODO replace os.system with some other call to system like python subprocess.
   import os
   import time
 
@@ -179,7 +189,7 @@ def open_plugin(noun):
   """
     Fetches filename to and passes it to start_plugin().
 
-     Args:
+    Args:
       noun(String): The noun used to call the plugin
       Example: "Run the time" where "time" is the noun
     Returns:
