@@ -63,7 +63,7 @@ def speak(response):
  
   #For mac os.
   if sys.platform == "darwin":
-    command = 'echo \"{}\" | say'.format(response)
+    command = 'echo \"{}\" | say '.format(response)
   else:
     # Requires festival on linux.
     command = 'echo \"{}\" | festival --tts'.format(response)

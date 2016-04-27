@@ -3,6 +3,7 @@ import sys
 import os
 from language import jokes as joke
 import look
+
 """
 
   This is where alan's actions are stored.
@@ -23,7 +24,6 @@ import look
     }
       
 """
-
 # Action functions go here
 def open_url(sentence):
   """
@@ -169,8 +169,10 @@ def take_a_nap(sentence):
     Example: "Take a nap"
    """
   from memory import context
-  context.sleeping = True
-  return "Ok, if you want to wake me up say " + context.WAKE_PHRASE + "."
+  if "nap" in sentence:
+    context.sleeping = True
+    return "Ok, if you want to wake me up say " + context.WAKE_PHRASE + "."
+  return
 
 
 def play_music(sentence):
@@ -295,6 +297,44 @@ def learn_a_task(sentence):
   import learning.learn
   return learning.learn.start_learning(sentence)
 
+def take(sentence):
+  # Get sentence keys
+  q = [x[0] for x in sentence]
+
+  if "nap" in q:
+    take_a_nap(sentence)
+  elif "picture" in q:
+    take_picture(sentence)
+  else:
+    return "I do not know how to take that yet."
+  return
+
+def take_picture(sentence):
+  import language.questions
+  import relationships.face_recognition
+
+  relationships.face_recognition.face_recognition()
+  
+  # # Capture image from webcam
+  # frame = senses.eyes.eyes()
+
+
+  # if language.questions.binary_question("Would you like me to remember you? "):
+  #   name = language.questions.ask_for_text("Who are you?").lower()
+  #   path = 'relationships/profiles/' + name
+  #   if os.path.exists(path):
+  #     index = len([a for a in os.listdir(path) if os.path.isfile(path + "/"+a)])
+  #     #print index
+  #   else:
+  #     index = 0
+  #     os.makedirs('relationships/profiles/'+name)
+  #   # Write first file into /profiles
+  #   new_filename = path +"/img"+str(index)+".jpg"
+  #   print "Saving to: ", new_filename
+  #   senses.eyes.write_image(new_filename, frame)
+  #   # Store into DB
+  #   memory.face_memories.store_face(new_filename, frame)
+  #   return "Picture Save"
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
@@ -308,7 +348,7 @@ actions_dictionary = {
   "recall": recall,
   "forget": forget,
   "read": read_reddit,
-  "take": take_a_nap,
+  "take": take, # [(take_a_nap, regex), (take_picture, regex("screen/me/whatever"))]
   "play": play_music,
   "send": send_email,
   "stop": stop_active_processes,
@@ -328,6 +368,6 @@ def pick_action(verb, sentence):
   global actions_dictionary
   verb = verb.lower()
   if verb in actions_dictionary.keys():
-    return actions_dictionary[verb](sentence)
+      return actions_dictionary[verb](sentence)
   else:
     return "I don't have an action for the verb " + verb
