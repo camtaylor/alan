@@ -18,8 +18,9 @@ def listen():
   """
   print ""
   words = raw_input(">>> ").strip()
-  if words == "alan" or words == "voice":
+  if words == "alan" or words == "voice" or context.no_prompt:
     # Makes a call to the google voice api to get words from mic.
+    print context.no_prompt
     speak("Yes")
     words = ears.ears()
   elif words.isdigit():

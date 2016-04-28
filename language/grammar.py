@@ -27,7 +27,7 @@ def branch(words):
     response = imperative(parts_of_speech)
     return response
   else:
-    print parts_of_speech
+    declarative(parts_of_speech)
 
 
 def interrogative(remaining_words):
@@ -64,10 +64,14 @@ def imperative(words):
   return actions.pick_action(verb, words)
 
 
-def declarative(remaining_words):
+def declarative(words):
   """
     Handles declarative sentences.
   """
+  # Pick up an incorrectly tagged action
+  if words[0][0] in actions.actions_dictionary.keys():
+    return actions.pick_action(words[0][0], words)
+  print words
 
 def nested_concept(remaining_words):
   remaining_words = remove_extraneous_words(remaining_words)

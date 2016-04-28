@@ -325,6 +325,16 @@ def take_picture(sentence):
 
   relationships.face_recognition.face_recognition()
 
+def teach_a_task(sentence):
+  """
+    Dispatch: teach
+    Function to begin teaching.
+  """
+  import teaching.teach
+  sentence.pop(0)
+  name = sentence.pop(0)[0]
+  return teaching.teach.start_teaching(sentence, name)
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -344,7 +354,8 @@ actions_dictionary = {
   "look": look,
   "give": give_time,
   "run": run_a_plugin,
-  "learn": learn_a_task
+  "learn": learn_a_task,
+  "teach": teach_a_task
 }
 
 

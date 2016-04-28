@@ -24,9 +24,6 @@ Schema:
     - Phone
     - Address
   Table 3: Alan
-
-
-  
 """
 
 sqlite_file = os.path.abspath('relationships/relationships.sqlite')
@@ -87,3 +84,4 @@ def init_db():
   
 def close_db():
   conn.close()
+  

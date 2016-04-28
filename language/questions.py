@@ -69,7 +69,6 @@ def ask_for_long_text():
   from memory import context
   done = False
   text_block = current_block = ""
-  context.no_prompt = True
   while not done:
     if text_block is not "" and current_block is "":
       done = binary_question("Is that all?")
@@ -89,7 +88,5 @@ def ask_for_long_text():
       # Append to final text block
       current_block = ""
       text_block = (text_block + " " + answer)
-  context.no_prompt = False
-      
           
 
