@@ -3,8 +3,7 @@ import memory
 import threading
 
 """
-  This file holds helper functions for accessing system calls. One of which is starting services that run on the os.
-  The functions should create or communicate with system services.
+  The plugin_manager module controls plugins. The plugins are started and controlled by plugin_manager functions.
 """
 
 
@@ -27,6 +26,7 @@ def run_service(command):
   """
   try:
     service = subprocess.Popen(command, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    # TODO give the service a name so it can be referenced later. Tuple
     memory.context.services.append(service)
     return service
   except:
@@ -94,4 +94,3 @@ def run_osa_service(app_name, command_string, params):
       result = ""
     return str(result)
 
-    

@@ -20,6 +20,7 @@ import environment.system
 import os
 import sys
 import alan
+import threading
 
 run_commands = {
     # word used
@@ -29,7 +30,11 @@ run_commands = {
   "stocks": "stocks.sh",
   "music": "music.osa",
   "roku": "roku.sh",
-  "fibonacci": "fibonacci.cpp"
+  "fibonacci": "fibonacci.cpp",
+  "translator": "translator.py",
+  "hello": "HelloWorld.java",
+  "background": "background.sh",
+  "server": "server.js"
 }
 
 
@@ -40,14 +45,32 @@ system_call = {
   "pl": "perl",
   "osa": "osascript",
   "cpp": "compile",
+  "java": "compile",
+  "js": "node"
 }
 
+
+def attach_notification_listener(plugin):
+  """
+    When a plugin calls :release: the notification listener reads the plugin stdout for  :notify: command.
+
+    Args:
+      plugin (subprocess.Popen): The plugin that the notification listener is attached to.
+  """
+  while True:
+    line = plugin.stdout.readline()
+    if line != '':
+      if ":notify:" in line:
+        alan.speak(line.replace(":notify:", ""))
+    else:
+      break
 
 def attach_sphinx(plugin, plugin_directory):
   """
     Function that attaches pocketsphinx_continous to a plugin and uses its keyphrase.list.
+    If a developer includes a keyphrase.list this will be automatically called.
   """
-  # TODO finish function and write docs. Currently works but breaks pipe if alan input is used.
+  # TODO finish function and write docs.
   import subprocess
   import memory.context
   keyphrase_list_path = plugin_directory + "keyphrase.list"
@@ -65,30 +88,37 @@ def interpret(plugin):
     Function that interprets plugin data from stdin and writes to stdout.
 
     Args:
-      plugin (subprocess.Popen): The process running the plugin.
+      plugin (subprocess.Popen object): The process running the plugin.
     Returns:
       (String) : status of the plugin
 
-    # TODO add timeout to stop plugin if it is non responsive.
-    # TODO I remember reading that stdin.write() and stdout.readline() are not ideal so they will need to be replaced.
+    # TODO I remember reading that stdin.write() and stdout.readline() is not ideal so they might need to be replaced.
   """
-  #TODO needs work.
+  #TODO should be migrated to a class. Also it will eventually handle many commands other than :speak: and :listen:
   while True:
     line = plugin.stdout.readline()
     if line != '':
-      # the real code does filtering here
 
       if ':listen:' in line:
         try:
           plugin.stdin.write(str(alan.listen()) + "\n")
         except:
           return "Exiting plugin"
+
       if ':speak:' in line:
         line = line.replace(":speak:", "")
         line = line.replace(":listen:", "")
         alan.speak(line)
+
+      if ':release:' in line:
+        # The plugin goes into background mode and spawns a notification_listener thread.
+        background_listener = threading.Thread(target=attach_notification_listener, args=[plugin])
+        background_listener.start()
+        return "Plugin is now running in the background."
+
       else:
         print line.rstrip()
+
     else:
       break
   return "Finished running plugin."
@@ -97,15 +127,29 @@ def interpret(plugin):
 def compile_and_run(file_path, filename, extension):
   """
     Function to compile and run plugins that are not interpretted languages.
+
+    Args:
+      file_path (String): absolute path to plugin file.
+      filename (String): name of the file.
+      extension (String): extension of the file like py or java
+    Returns:
+      (subrocess.Popen) The plugin started as a subprocess.
   """
-  # TODO replace os.system with some other call to system like subprocess.
+  # TODO replace os.system with some other call to system like python subprocess.
   import os
+  import time
+
   if extension == "cpp":
-    print file_path
     plugin_path = file_path.replace(filename, "plugin")
     os.system("g++ {} -o {}".format(file_path, plugin_path))
     plugin = environment.system.run_service(plugin_path)
     return plugin
+  elif extension == "java":
+    os.system("javac {}".format(file_path))
+    plugin = environment.system.run_service(["java", "-cp", file_path.replace(filename, ""), filename.split(".")[0]])
+    print filename.split(".")[0]
+    return plugin
+
 
 
 def start_plugin(filename):
@@ -119,13 +163,16 @@ def start_plugin(filename):
   """
   split_filename = filename.split(".")
   extension = split_filename[-1]
-  directory = split_filename[0]
+  directory = split_filename[0].lower()
   print "The file extension of the plugin is " + extension
   plugin_path = "plugins/" + directory
   relative_path = plugin_path + "/" + filename
   file_path = os.path.join(os.path.abspath(sys.path[0]), relative_path)
   if system_call[extension] != "compile":
-    plugin = environment.system.run_service([system_call[extension], file_path])
+    if extension == "py":
+      plugin = environment.system.run_service([system_call[extension], "-u", file_path])
+    else:
+      plugin = environment.system.run_service([system_call[extension], file_path])
   else:
     plugin = compile_and_run(file_path, filename, extension)
   # Test if the plugin is exists.
@@ -142,7 +189,7 @@ def open_plugin(noun):
   """
     Fetches filename to and passes it to start_plugin().
 
-     Args:
+    Args:
       noun(String): The noun used to call the plugin
       Example: "Run the time" where "time" is the noun
     Returns:
@@ -153,3 +200,13 @@ def open_plugin(noun):
     return start_plugin(run_commands[noun])
   else:
     return "I can't find a plugin for " + noun
+
+def reconnect_plugin():
+  """
+    Function to reconnect a plugin to the interpreter after it has been running in the background.
+  """
+  # TODO actually find a certain service by name rather than grabbing the 0 index from services.
+  import memory.context
+  if len(memory.context.services) == 0:
+    return
+  interpret(memory.context.services[0])
