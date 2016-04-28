@@ -1,8 +1,12 @@
 import sqlite3
 import os
 
-sqlite_file = os.path.abspath('memory/memories.sqlite')
-#TODO : Change SQLite file to be accessable from anywhere
+
+# Retrieve sqlite file.
+__location__ = os.path.realpath(
+  os.path.join(os.getcwd(), os.path.dirname(__file__)))
+sqlite_file = os.path.join(__location__, 'memories.sqlite')
+
 
 text_type="TEXT"
 table_name = "MEMORY"
