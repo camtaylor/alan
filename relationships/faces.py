@@ -12,12 +12,16 @@ class Faces:
   Currently stores recognized faces and labels, respectivly
   Attr:
     List: faces, labels
-    String: path
     LBPHFaceRecognizer: current_recognizer
 
   Methods:
-    find_faces: Finds all current faces in /friends
+    get_face_count: returns number of faces saved
+    add_face: Appends face to list of faces for reference
     recognizer: instantiates and trains FaceRecognizer
+    retrain: retrains FaceRecognizer
+    convert_image: adjust size, colors using histogram equalization
+    get_new_face: finds face in image and returns the amount of faces found
+                  with corresponding labels
   """
 
   faces, index = [], [] 
@@ -36,8 +40,6 @@ class Faces:
     """
     self.faces.append(face)
     self.index.append(index)
-    cv2.imshow("Added", face)
-    cv2.waitKey(0)
 
   def recognizer(self):
     """
@@ -54,11 +56,15 @@ class Faces:
 
   def convert_image(self, image):
     """
-    Converts image into grayscale and resizes
+    Converts image into grayscale, resizes, and auto-adjust contrast
     """
     converted_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     resized_image = cv2.resize(converted_image, (256, 256))
-    return resized_image
+    
+    # Adaptive Histogram Equalization
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    img = clahe.apply(resized_image)
+    return img
 
 
   def get_new_face(self):
