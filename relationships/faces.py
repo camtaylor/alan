@@ -27,6 +27,8 @@ class Faces:
   faces, index = [], [] 
   current_recognizer = None
 
+  named_faces = {}
+
   def get_face_count(self):
     """
     Returns the amount of faces saved
@@ -34,12 +36,13 @@ class Faces:
     
     return len(self.faces)
 
-  def add_face(self, face, index):
+  def add_face(self, face):
     """
     Appends to face and index list
     """
+    self.index.append(len(self.faces))
     self.faces.append(face)
-    self.index.append(index)
+
 
   def recognizer(self):
     """

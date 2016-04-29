@@ -53,7 +53,6 @@ def speak(response):
   """
   # Turn alan's talking context to true.
   context.talking = True
-  print response
 
   # TODO: Mirror personal pronouns (you -> me, me-> you)
 

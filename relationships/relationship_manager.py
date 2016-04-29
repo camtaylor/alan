@@ -2,11 +2,6 @@ import sqlite3
 import os
 
 """
-Memories:
-  ** What Alan knows **
-  Tasks - raw, code, key
-  Alan settings - OS (linux, mac, Rpi)
-  * Generic to OS - downloadable 'memories' *
 
 Relationships:
   ** Who Alan is and who he knows **
@@ -41,8 +36,7 @@ def database_exists():
 
 def store_relationship(key, image):
   """
-    Function to store a task into memory.
-    Tasks are learned procedures from the learning module.
+    Function to store a relationship.
   """
   query = "INSERT INTO {} (NAME,IMAGE) \
         VALUES ('{}', '{}')".format(table_name, key.lower(), image)
@@ -54,17 +48,17 @@ def store_relationship(key, image):
 
 def recall_all():
   """
-    Function to simply print the whole MEMORY table.
+    Function to simply print the whole relationship table.
   """
   c.execute("SELECT * FROM {}".format(table_name))
   print c.fetchall()
 
 
-def recall_memory(memory_name):
+def recall_relationship(relationship_name):
   """
-    Function to recall a certain memory by NAME column in the MEMORY table.
+    Function to recall a certain relationship by NAME column in the relationship table.
   """
-  c.execute("SELECT * FROM {} WHERE NAME = '{}'".format(table_name, memory_name))
+  c.execute("SELECT * FROM {} WHERE NAME = '{}'".format(table_name, relationship_name))
   return c.fetchall()
 
 

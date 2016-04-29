@@ -88,5 +88,4 @@ def ask_for_long_text():
       # Append to final text block
       current_block = ""
       text_block = (text_block + " " + answer)
-          
 

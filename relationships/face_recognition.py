@@ -5,30 +5,36 @@ def get_saved_faces():
   faces = relationships.faces.Faces()
   return faces
 
+
+def name_a_face(index, faces):
+  name = raw_input("What is your name?")
+  faces.named_faces[str(index)] = name
+  print faces.named_faces
+
 def face_recognition():  
   # Get current object of faces saved
   faces = get_saved_faces()
 
   # Get faces from webcam
   captured_faces, captured_index = faces.get_new_face()
-  print "Current Faces in memory: " , faces.get_face_count()
-  if faces.get_face_count() > 0:
+  if len(captured_faces) == 0:
+    return
+  if faces.get_face_count() == 0:
+    for index, face in enumerate(captured_faces):
+      faces.add_face(face)
+      name_a_face(index, faces)
+      return
+  else:
     model = faces.recognizer()
     # Check for matches
-    if len(captured_faces) == 0:
-      return "No faces found"
     for face in captured_faces:
-      _, confidence = model.predict(face)
+      matched_face_index, confidence = model.predict(face)
       print "Confidence: ", str(confidence)
       if confidence < 65: # MATCH
-        print "You match!"
+        print "Hello " , faces.named_faces[str(matched_face_index)]
       else:
-        print "Could not match face"
-  
-  elif captured_faces and len(captured_faces) > 0:
-    # Faces found in webcam, but not in FaceRecognizer model
-    for count, face in enumerate(captured_faces):
-      faces.add_face(face, count)
-      print "Face added!"
+        name_a_face(len(faces.faces), faces)
+        faces.add_face(face)
+
 
   # Save pickle
