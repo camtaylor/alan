@@ -67,13 +67,17 @@ def replace_keyphrases(output_list):
   swapped_keyphrases = []
   for phrase in output_list:
     # The word get denotes variable assignment.
-    if phrase.split()[0] == "get":
+    if phrase.split()[0] == "get" and "by" in phrase:
       phrase = phrase.replace("get ", "")
       phrase_list = phrase.split("by")
       # TODO needs lemmatization before surrounding with alan.think()
       phrase_list[-1] = "alan.think(\"" + phrase_list[-1] + "\")"
       defined_variables.append(phrase_list[0].strip().replace(" ", "_"))
       swapped_keyphrases.append(phrase_list[0] + "= " + phrase_list[-1])
+      continue
+    elif phrase.split()[0] == "get":
+      phrase = phrase.replace("get ", "").strip()
+      swapped_keyphrases.append(phrase)
       continue
     if phrase.split()[0] != "say" and phrase.split()[0] in command_list:
       if "is divisible by" in phrase:
@@ -91,7 +95,7 @@ def replace_keyphrases(output_list):
           tokenized_phrase.pop()
           anded = True
         phrase = " ".join(tokenized_phrase)
-        phrase = phrase.replace("say", "alan.speak(\"")
+        phrase = phrase.replace("say ", "alan.speak(\"")
         phrase += "\")"
         if anded:
           phrase += " and"
@@ -150,7 +154,7 @@ def substitute_variables(code_string):
     Example:
       "This is the_variable example" --> "This is " + the_variable + "example"
   """
-  return  re.sub(r'(\")(.+?(?=the_))(the_[^ ,^\"]*)([^\"]*)(\")', r'\1\2"+str(\3)+"\4\5', code_string)
+  return  re.sub(r'(\")(.*?(?=the_))(the_[^ ,^\"]*)([^\"]*)(\")', r'\1\2"+str(\3)+"\4\5', code_string)
 
 
 def start_learning(sentence):
