@@ -14,8 +14,9 @@ function handleRequest(request, response){
 var server = http.createServer(handleRequest);
 
 //Lets start our server
-server.listen(PORT, function(){
-    //Callback triggered when server is successfully listening. Hurray!
-    console.log(":speak:Server listening on: http://localhost:%s", PORT);
-    console.log(":release:");
-});
+server.listen(PORT, "0.0.0.0");
+
+//Callback triggered when server is successfully listening. Hurray!
+console.log(":speak:Server listening on: http://localhost:%s", PORT);
+console.log(":release:");
+
