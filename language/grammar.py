@@ -27,7 +27,8 @@ def branch(words):
     response = imperative(parts_of_speech)
     return response
   else:
-    declarative(parts_of_speech)
+    response = declarative(parts_of_speech)
+    return response
 
 
 def interrogative(remaining_words):
@@ -68,10 +69,8 @@ def declarative(words):
   """
     Handles declarative sentences.
   """
-  # Pick up an incorrectly tagged action
   if words[0][0] in actions.actions_dictionary.keys():
     return actions.pick_action(words[0][0], words)
-  print words
 
 def nested_concept(remaining_words):
   remaining_words = remove_extraneous_words(remaining_words)
@@ -102,6 +101,3 @@ def remove_extraneous_words(remaining_words):
 def return_nouns(remaining_words):
   return [x for x in remaining_words if x[1][0] == "N"]
 
-
-def action(remaining_words):
-  print remaining_words

@@ -310,7 +310,7 @@ def take(sentence):
   if "nap" in q:
     take_a_nap(sentence)
   elif "picture" in q:
-    take_picture(sentence)
+    return take_picture(sentence)
   else:
     return "I do not know how to take that yet."
   return
@@ -322,8 +322,7 @@ def take_picture(sentence):
   """
   import language.questions
   import relationships.face_recognition
-
-  relationships.face_recognition.face_recognition()
+  return relationships.face_recognition.face_recognition()
 
 def teach_a_task(sentence):
   """
@@ -334,6 +333,19 @@ def teach_a_task(sentence):
   sentence.pop(0)
   name = sentence.pop(0)[0]
   return teaching.teach.start_teaching(sentence, name)
+
+def translate_sentence(sentence):
+  from yandex_translate import YandexTranslate
+  from plugins.translator import language_codes
+  translate = YandexTranslate('trnsl.1.1.20160421T051442Z.3f43d13c5d30c594.bf3c396e87421e06cac7eab7b3771b3bf20af85c')
+  sentence.pop(0)
+  message = " ".join([word[0] for word in sentence]).strip()
+  language = translate.detect(message)
+  # translate from detected language to english
+  translated_response = "You are speaking {}.".format(language_codes.languages[language])
+  translation = translate.translate(message, '{}-en'.format(language))
+  translated_response += " The english translation is {}.".format(translation['text'][0])
+  return translated_response
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
@@ -355,7 +367,8 @@ actions_dictionary = {
   "give": give_time,
   "run": run_a_plugin,
   "learn": learn_a_task,
-  "teach": teach_a_task
+  "teach": teach_a_task,
+  "translate": translate_sentence,
 }
 
 
@@ -368,6 +381,6 @@ def pick_action(verb, sentence):
   global actions_dictionary
   verb = verb.lower()
   if verb in actions_dictionary.keys():
-      return actions_dictionary[verb](sentence)
+    return actions_dictionary[verb](sentence)
   else:
     return "I don't have an action for the verb " + verb

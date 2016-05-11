@@ -98,7 +98,6 @@ def interpret(plugin):
   while True:
     line = plugin.stdout.readline()
     if line != '':
-
       if ':listen:' in line:
         try:
           plugin.stdin.write(str(alan.listen()) + "\n")
@@ -115,6 +114,9 @@ def interpret(plugin):
         background_listener = threading.Thread(target=attach_notification_listener, args=[plugin])
         background_listener.start()
         return "Plugin is now running in the background."
+
+      if ':think:' in line:
+        plugin.stdin.write(str(alan.think(line.replace(":think:", "").strip())) + "\n")
 
       else:
         print line.rstrip()
