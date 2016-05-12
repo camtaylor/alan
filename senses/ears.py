@@ -14,7 +14,7 @@ def ears():
   try:
     return r.recognize_google(audio)
   except sr.UnknownValueError:
-    return "Please speak up."
+    return ears() 
   except sr.RequestError as e:
     return "I do not understand; {0}".format(e)
 
