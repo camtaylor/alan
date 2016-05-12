@@ -59,10 +59,10 @@ def speak(response):
   if not response:
     response = "I don't know how to respond to that."
   response = response.encode('ascii', 'ignore')
-  print response
   #For mac os.
   if sys.platform == "darwin":
     command = 'echo \"{}\" | say '.format(response)
+    print "\n"
   else:
     # Requires festival on linux.
     command = 'echo \"{}\" | festival --tts'.format(response)

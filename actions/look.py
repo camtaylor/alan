@@ -45,16 +45,11 @@ def contacts_search(search_term, sentence):
     result = environment.system.run_osa_service('Contacts', '{} of people where name contains "'.format(search_term) + query_string + '"', [])
     print result
     if len(result) > 1:
-      alan.speak("Here are my results for " + query_string)
-      further_action = language.questions.ask_for_text("Would you like me to message them?")
-      if 'y' in further_action:
-        return send_imessage(result.strip())
-      else:
-        return "Okay"
+      return "Here are my results for " + query_string + " : " + result.strip()
     else:
-      return ("Could not find " + query_string)
+      return "Could not find " + query_string
   else:
-    return("I do not work for non MacBook devices yet.")
+    return "I do not work for non MacBook devices yet."
 
 
 

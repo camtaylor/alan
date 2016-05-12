@@ -265,7 +265,7 @@ def look(sentence):
     #Default to phone search
     # TODO: add functionality for multiple queries
     search_term = "phone"
-  contacts_search(search_term, query_list)
+  return contacts_search(search_term, query_list)
   
 
 def give_time(sentence):

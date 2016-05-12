@@ -9,6 +9,7 @@ const PORT=8080;
 function handleRequest(request, response){
     // Get sentence from url
     var sentence = url.parse(request.url,true).query['sentence'];
+    sentence = sentence.toLowerCase();
     console.log(sentence);
     // Pass the sentence to alan to think.
     console.log(":think:" + sentence);
