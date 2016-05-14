@@ -186,7 +186,7 @@ def play_music(sentence):
   import environment.system
   # TODO check for config file and add one if not present.
   alan.speak("Playing music from pandora")
-  environment.system.run_service("pianobar")
+  environment.system.run_service("music", "pianobar")
   import time
   time.sleep(10)
   alan.listen()
@@ -235,12 +235,14 @@ def stop_active_processes(sentence):
     Future: "Stop the music."
   """
   import memory.context
-  for process in memory.context.services:
-    print process
-    process.kill()
-  #Clear services list because the services have been killed.
-  memory.context.services = []
-  return "Stopped running services."
+  import environment.system
+  service_name = " ".join([word[0] for word in sentence if word[1][0] == 'N']).strip()
+  if len(service_name) != 0:
+    environment.system.stop_service(service_name)
+    return "Stopped " + service_name
+  else:
+    environment.system.stop_all_services()
+    return "Stopped running services."
 
 def look(sentence):
   """
@@ -310,7 +312,7 @@ def take(sentence):
   if "nap" in q:
     take_a_nap(sentence)
   elif "picture" in q:
-    take_picture(sentence)
+    return take_picture(sentence)
   else:
     return "I do not know how to take that yet."
   return
@@ -323,7 +325,7 @@ def take_picture(sentence):
   import language.questions
   import relationships.face_recognition
 
-  relationships.face_recognition.face_recognition()
+  return relationships.face_recognition.face_recognition()
 
 def teach_a_task(sentence):
   """

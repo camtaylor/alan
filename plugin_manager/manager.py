@@ -124,11 +124,12 @@ def interpret(plugin):
   return "Finished running plugin."
 
 
-def compile_and_run(file_path, filename, extension):
+def compile_and_run(service_name, file_path, filename, extension):
   """
     Function to compile and run plugins that are not interpretted languages.
 
     Args:
+      service_name (String): The name in which to run the service. Used in enviroment.system.run_service
       file_path (String): absolute path to plugin file.
       filename (String): name of the file.
       extension (String): extension of the file like py or java
@@ -142,21 +143,22 @@ def compile_and_run(file_path, filename, extension):
   if extension == "cpp":
     plugin_path = file_path.replace(filename, "plugin")
     os.system("g++ {} -o {}".format(file_path, plugin_path))
-    plugin = environment.system.run_service(plugin_path)
+    plugin = environment.system.run_service(service_name, plugin_path)
     return plugin
   elif extension == "java":
     os.system("javac {}".format(file_path))
-    plugin = environment.system.run_service(["java", "-cp", file_path.replace(filename, ""), filename.split(".")[0]])
+    plugin = environment.system.run_service(service_name, ["java", "-cp", file_path.replace(filename, ""), filename.split(".")[0]])
     print filename.split(".")[0]
     return plugin
 
 
 
-def start_plugin(filename):
+def start_plugin(service_name, filename):
   """
     In charge of starting plugins Plugins are implemented as services.
 
     Args:
+      service_name (String): The name in which to run the service. Used in enviroment.system.run_service
       filename (String): The filename of the plugin.
     Returns:
       (String) : Status of the plugin.
@@ -170,11 +172,11 @@ def start_plugin(filename):
   file_path = os.path.join(os.path.abspath(sys.path[0]), relative_path)
   if system_call[extension] != "compile":
     if extension == "py":
-      plugin = environment.system.run_service([system_call[extension], "-u", file_path])
+      plugin = environment.system.run_service(service_name, [system_call[extension], "-u", file_path])
     else:
-      plugin = environment.system.run_service([system_call[extension], file_path])
+      plugin = environment.system.run_service(service_name, [system_call[extension], file_path])
   else:
-    plugin = compile_and_run(file_path, filename, extension)
+    plugin = compile_and_run(service_name, file_path, filename, extension, service_name)
   # Test if the plugin is exists.
   if plugin:
     attach_sphinx(plugin, file_path.replace(filename, ""))
@@ -197,7 +199,7 @@ def open_plugin(noun):
   """
   noun = noun.lower()
   if noun in run_commands.keys():
-    return start_plugin(run_commands[noun])
+    return start_plugin(noun, run_commands[noun])
   else:
     return "I can't find a plugin for " + noun
 
@@ -209,4 +211,4 @@ def reconnect_plugin():
   import memory.context
   if len(memory.context.services) == 0:
     return
-  interpret(memory.context.services[0])
+  interpret(memory.context.services[0][1])

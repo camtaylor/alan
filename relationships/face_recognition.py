@@ -31,7 +31,7 @@ def face_recognition():
       matched_face_index, confidence = model.predict(face)
       print "Confidence: ", str(confidence)
       if confidence < 65: # MATCH
-        print "Hello " , faces.named_faces[str(matched_face_index)]
+        return faces.named_faces[str(matched_face_index)]
       else:
         name_a_face(len(faces.faces), faces)
         faces.add_face(face)

@@ -15,23 +15,44 @@ except ImportError:
     DEVNULL = open(os.devnull, 'wb')
 
 
-def run_service(command):
+def run_service(service_name, command):
   """
     This function can be used to start a command as a service and add it to the services list in the memory context.
     TODO add communication through piping.
 
     Use this or run_callback_service when you want to execute a command in the background.
    Args:
+     service_name (String) : the name of the service to reference by name later. Ex. "Stop the music"
      command (String) : command you want to run for the service.
   """
   try:
     service = subprocess.Popen(command, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     # TODO give the service a name so it can be referenced later. Tuple
-    memory.context.services.append(service)
+    memory.context.services.append([service_name, service])
     return service
   except:
     return False
 
+
+def stop_service(service_name):
+  """
+    This function can be used to stop a service that is running. The service will be reference by name.
+    Kills the services and removes it from the list of services.
+   Args:
+     service_name (String) : the name of the service to be killed Ex. "Stop the music"
+  """
+  running_services = []
+  for service in memory.context.services:
+    if service[0] == service_name:
+      service[1].kill()
+    else:
+      running_services.append(service)
+  memory.context.services = running_services
+
+def stop_all_services():
+  for service in memory.context.services:
+    service[1].kill()
+  memory.context.services = []
 
 def run_callback_service(callback, command):
   """
