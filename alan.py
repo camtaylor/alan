@@ -65,6 +65,7 @@ def speak(response):
   else:
     # Requires festival on linux.
     command = 'echo \"{}\" | festival --tts'.format(response)
+    print response
   os.system(command)
   
   # Alan is done talking. Set talking context to false.

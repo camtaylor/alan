@@ -34,7 +34,8 @@ run_commands = {
   "translator": "translator.py",
   "hello": "HelloWorld.java",
   "background": "background.sh",
-  "server": "server.js"
+  "server": "server.js",
+  "google": "google.py",
 }
 
 
