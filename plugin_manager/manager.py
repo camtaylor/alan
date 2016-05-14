@@ -95,7 +95,6 @@ def interpret(plugin):
 
     # TODO I remember reading that stdin.write() and stdout.readline() is not ideal so they might need to be replaced.
   """
-  #TODO should be migrated to a class. Also it will eventually handle many commands other than :speak: and :listen:
   while True:
     line = plugin.stdout.readline()
     if line != '':
@@ -164,6 +163,7 @@ def start_plugin(service_name, filename):
     Returns:
       (String) : Status of the plugin.
   """
+  import memory.context
   split_filename = filename.split(".")
   extension = split_filename[-1]
   directory = split_filename[0].lower()
@@ -181,7 +181,9 @@ def start_plugin(service_name, filename):
   # Test if the plugin is exists.
   if plugin:
     attach_sphinx(plugin, file_path.replace(filename, ""))
+    memory.context.no_prompt = True
     interpreter_message = interpret(plugin)
+    memory.context.no_prompt = False
     return interpreter_message
   else:
     print file_path

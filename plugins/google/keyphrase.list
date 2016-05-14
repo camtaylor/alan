@@ -6,3 +6,6 @@ search/1e-1/
 exit/1e-5/
 top/1e-1/
 down/1e-5/
+new tab/1e-10/
+close tab/1e-5/
+switch/1e-5/
