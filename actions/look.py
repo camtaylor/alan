@@ -41,9 +41,8 @@ def contacts_search(search_term, sentence):
 
   if sys.platform == "darwin":
     query_string = ' '.join(sentence)
-    alan.speak("Looking up " + query_string)
+    # alan.speak("Looking up " + query_string)
     result = environment.system.run_osa_service('Contacts', '{} of people where name contains "'.format(search_term) + query_string + '"', [])
-    print result
     if len(result) > 1:
       return "Here are my results for " + query_string + " : " + result.strip()
     else:

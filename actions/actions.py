@@ -45,12 +45,13 @@ def display_picture(sentence):
   concept = " ".join([word[0] for word in sentence if "N" in word[1]])
   page = wikipage.WikiPage(" ".join([word[0] for word in sentence if "N" in word[1]]))
   if len(page.image_url) > 0:
-    if sys.platform == "darwin":
-      command = "open http://" + page.image_url
-      os.system(command)
-    else:
-      webbrowser.open("http://" + page.image_url)
-    return "Here's a " + concept + " picture."
+    return "http://"+page.image_url
+    # if sys.platform == "darwin":
+    #   command = "open http://" + page.image_url
+    #   os.system(command)
+    # else:
+    #   webbrowser.open("http://" + page.image_url)
+    # return "Here's a " + concept + " picture."
   else:
     return "Sorry but I can't find a picture of that."
 
@@ -151,7 +152,7 @@ def read_reddit(sentence):
   from alan import speak
   sentence.pop(0)
   subreddit = "".join([word[0] for word in sentence if 'the' not in word[0].lower() and 'subreddit' not in word[0]])
-  speak("Reading the " + subreddit + " subreddit.")
+  #speak("Reading the " + subreddit + " subreddit.")
   r = praw.Reddit(user_agent='Alan ai experiment')
   submissions = r.get_subreddit(subreddit).get_hot(limit=10)
   return " \n".join([str(index + 1)+ " " + submission.title + "." for index, submission in enumerate(submissions)])
