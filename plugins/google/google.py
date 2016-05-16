@@ -18,14 +18,25 @@ def get_text(prompt):
   text = raw_input()
   return text
 
+
+def get_links():
+  text = get_text("What is the link?")
+  links = browser.find_elements_by_partial_link_text('{}'.format(text))
+  links_lowered = browser.find_elements_by_partial_link_text('{}'.format(text.lower()))
+  links_titled = browser.find_elements_by_partial_link_text('{}'.format(text.title()))
+
+  return links + links_lowered + links_titled
+
+
+
 def action(action_name):
   global page_location
   if action_name == "click":
-    text = get_text("What is the link?")
-    links = browser.find_elements_by_partial_link_text('{}'.format(text.lower().replace(" ", "")))
-    if len(links) == 0:
-      links = browser.find_elements_by_partial_link_text('{}'.format(text.title().replace(" ", "")))
+    links = get_links()
     try:
+      if len(links) > 0:
+        for link in links:
+          print link.text
       links[0].click()
     except:
       print ":speak:Can't open the link."
@@ -56,6 +67,13 @@ def action(action_name):
   elif action_name == "switch":
     browser.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.SHIFT + Keys.TAB)
     browser.switch_to_window(main_window)
+
+  elif action_name == "next":
+    try:
+      browser.find_element_by_link_text('Next').click()
+    except:
+      print ":speak:I couldn't find a next link."
+
 
 
 
