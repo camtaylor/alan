@@ -61,15 +61,24 @@ def speak(response):
   if not response:
     response = "I don't know how to respond to that."
   response = response.encode('ascii', 'ignore')
+
+
+  # Check if speak_response setting is False
+  if not context.speak_response:
+    print response
+    context.talking = False
+    return
+
   #For mac os.
   if sys.platform == "darwin":
     command = 'echo \"{}\" | say '.format(response)
+    if len(context.voice) > 0:
+      command += "-v {}".format(context.voice)
   else:
     # Requires festival on linux.
     command = 'echo \"{}\" | festival --tts'.format(response)
-    print response
   os.system(command)
-  
+  print response
   # Alan is done talking. Set talking context to false.
   context.talking = False
 
