@@ -14,8 +14,8 @@ import sys
 import os
 
 
-if __name__ == "__main__":
 
+def screen_capture():
   # If it's a mac, (AKA "darwin") gtk won't work. So run the command
   if sys.platform == "darwin":
     os.system("screencapture screenshot.png")
@@ -32,3 +32,7 @@ if __name__ == "__main__":
       print "Screenshot saved to screenshot.png."
     else:
       print "Unable to get the screenshot."
+
+
+if __name__ == "__main__":
+  screen_capture()
