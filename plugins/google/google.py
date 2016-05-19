@@ -22,10 +22,16 @@ def get_text(prompt):
 def get_links():
   text = get_text("What is the link?")
   links = browser.find_elements_by_partial_link_text('{}'.format(text))
+  if len(links) > 0:
+    return links
   links_lowered = browser.find_elements_by_partial_link_text('{}'.format(text.lower()))
+  if len(links) > 0:
+    return links_lowered
   links_titled = browser.find_elements_by_partial_link_text('{}'.format(text.title()))
+  if len(links) > 0:
+    return links
+  return []
 
-  return links + links_lowered + links_titled
 
 
 
