@@ -337,6 +337,36 @@ def teach_a_task(sentence):
   name = sentence.pop(0)[0]
   return teaching.teach.start_teaching(sentence, name)
 
+
+def change_context(sentence):
+  """
+    Dispatch: change
+    Function to change a context value in memory.context.
+    So far only changes voice.
+  """
+  #TODO make generic so you can change name, voice, volume etc.
+  import memory.context
+  import sys
+  import difflib
+  import inference.inference
+  voices = ["Alex", "Allison", "Amelie", "Ava",
+            "Bruce", "Chantal", "Daniel", "Fiona",
+            "Fred", "Junior", "Karen", "Kate", "Kathy",
+            "Kyoko", "Lee", "Moira", "Oliver", "Ralph",
+            "Samantha", "Serena", "Sin-ji", "Susan", "Ting-Ting",
+            "Tom", "Tessa", "Veena", "Zarvox"]
+
+
+  if sys.platform == "darwin":
+    string_sentence = " ".join([word[0] for word in sentence])
+    voice = string_sentence.split(" to ")[-1].strip()
+    voice = inference.inference.fuzzy_string_matching(voices, voice)
+    memory.context.voice = voice
+    return "Ok, I will speak using " + voice + "'s voice."
+  else:
+    return "I can not change that right now."
+
+
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
 
@@ -357,7 +387,8 @@ actions_dictionary = {
   "give": give_time,
   "run": run_a_plugin,
   "learn": learn_a_task,
-  "teach": teach_a_task
+  "teach": teach_a_task,
+  "change": change_context,
 }
 
 
