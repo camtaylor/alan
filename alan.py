@@ -7,6 +7,7 @@ from senses import ears
 import sys
 from memory import context, store_memories
 import environment.system
+import inference.inference
 
 def listen():
   """
@@ -37,11 +38,26 @@ def think(words):
     Returns:
       String: Returns a response for the given input.
   """
-  if vocabulary.vocabulary_check(words):
-    return vocabulary.response(words)
-  else:
-    return grammar.branch(words)
 
+  #Check for empty input to think.
+  if len(words) == 0 or not words:
+    return
+
+
+  if vocabulary.vocabulary_check(words):
+    response = vocabulary.response(words)
+  else:
+    response = grammar.branch(words)
+
+
+  # Our first try came back empty. Try to infer an action based on command that has worked in the past.
+  if not response and len(context.short_term_memory.conversation_list) > 0:
+    return think(inference.inference.fuzzy_string_matching(context.short_term_memory.conversation_list, words, context.inference))
+  elif not response:
+    return
+  else:
+    context.short_term_memory.conversation_list.append(words)
+    return response
 
 def speak(response):
   """

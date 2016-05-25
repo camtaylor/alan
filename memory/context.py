@@ -32,3 +32,7 @@ speak_response = True
 # Voice that alan will use to speak. Mac OSX only. Not relevant for Linux. Default is blank ( blank uses system default)
 # Example voice = "Samantha" uses the voice for Siri in IOS. If it is installed.
 voice = ""
+
+
+# Threshold for inference. Values from 0.0 - 1.0 are acceptable. Lower values indicate more guesses on intention.
+inference = .25

@@ -6,6 +6,7 @@ class Memory(object):
   """
 
   concept_dict = {}
+  conversation_list = []
 
   def __init__(self):
     concept_stack = []
