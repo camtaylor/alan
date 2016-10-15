@@ -17,5 +17,3 @@ def ears():
     return ears() 
   except sr.RequestError as e:
     return "I do not understand; {0}".format(e)
-
-

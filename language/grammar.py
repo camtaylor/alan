@@ -1,7 +1,8 @@
 import nltk
 from wikipage import WikiPage
-import slang
+from google_page import GooglePage
 from actions import actions
+from logic import logic_graph
 
 current_concept = None
 
@@ -17,15 +18,12 @@ def branch(words):
     Returns:
       String: response from one of the three functions that handle type of sentences.
   """
-  tokenized_words =  nltk.word_tokenize(words)
-  parts_of_speech =  nltk.pos_tag(tokenized_words)
+  parts_of_speech =  nltk.pos_tag(nltk.word_tokenize(words))
   leading_word = parts_of_speech[0][1][0]
   if leading_word == 'W':
-    response = interrogative(parts_of_speech[1:])
-    return response
+    return interrogative(parts_of_speech[1:])
   elif leading_word == "V":
-    response = imperative(parts_of_speech)
-    return response
+    return imperative(parts_of_speech)
   else:
     declarative(parts_of_speech)
 
@@ -42,6 +40,11 @@ def interrogative(remaining_words):
   else:
     concept_list = [word[0] for word in remaining_words if word[1] != "."]
     concept = " ".join(concept_list)
+
+    current_concept = GooglePage(concept)
+    if current_concept.summary:
+      return current_concept.summary 
+
     current_concept = WikiPage(concept)
     if len(current_concept.summary) > 0 and "IN" not in dict(remaining_words).values():
       return current_concept.summary
@@ -49,10 +52,6 @@ def interrogative(remaining_words):
     elif "IN" in dict(remaining_words).values():
       return nested_concept(remaining_words)
     else:
-      #Try urbandictionary after trying wiki.
-      #slang_term = slang.define_term(concept)
-      #if slang_term:
-        #return slang_term[0]
       return "I don't know"
 
 
@@ -60,8 +59,7 @@ def imperative(words):
   """
     Handles imperative sentences.
   """
-  verb = words[0][0]
-  return actions.pick_action(verb, words)
+  return actions.pick_action(words[0][0], words)
 
 
 def declarative(words):
@@ -71,7 +69,8 @@ def declarative(words):
   # Pick up an incorrectly tagged action
   if words[0][0] in actions.actions_dictionary.keys():
     return actions.pick_action(words[0][0], words)
-  print words
+  logic_graph.pos_insertion(words)
+   
 
 def nested_concept(remaining_words):
   remaining_words = remove_extraneous_words(remaining_words)
