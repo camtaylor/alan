@@ -25,12 +25,8 @@ def pos_insertion(pos_list):
   G.add_edges_from([pos_tuple[::-1] for pos_tuple in pos_list])
   G.add_path([word[0] for word in pos_list])
   G.add_path([pos[1] for pos in pos_list])
-  try:
-    print nx.shortest_path(G,source=raw_input("Source:"),target=raw_input("Target:"))
-  except Exception as e:
-    print e
   display_graph(G)
- 
+
 
 def in_edges(node):
   return G.in_edges(node)

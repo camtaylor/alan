@@ -43,7 +43,7 @@ def interrogative(remaining_words):
 
     current_concept = GooglePage(concept)
     if current_concept.summary:
-      return current_concept.summary 
+      return current_concept.summary
 
     current_concept = WikiPage(concept)
     if len(current_concept.summary) > 0 and "IN" not in dict(remaining_words).values():
@@ -70,7 +70,7 @@ def declarative(words):
   if words[0][0] in actions.actions_dictionary.keys():
     return actions.pick_action(words[0][0], words)
   logic_graph.pos_insertion(words)
-   
+
 
 def nested_concept(remaining_words):
   remaining_words = remove_extraneous_words(remaining_words)
