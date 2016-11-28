@@ -84,6 +84,16 @@ def attach_sphinx(plugin, plugin_directory):
     memory.context.services.append(sphinx)
 
 
+def attach_display(plugin_directory):
+  import webbrowser
+
+  display_path = plugin_directory + "display.html"
+  print display_path
+  if os.path.isfile(display_path):
+    webbrowser.open("file:///" + display_path)
+
+
+
 def interpret(plugin):
   """
     Function that interprets plugin data from stdin and writes to stdout.
@@ -180,6 +190,7 @@ def start_plugin(service_name, filename):
     plugin = compile_and_run(service_name, file_path, filename, extension, service_name)
   # Test if the plugin is exists.
   if plugin:
+    attach_display(file_path.replace(filename, ""))
     attach_sphinx(plugin, file_path.replace(filename, ""))
     memory.context.no_prompt = True
     interpreter_message = interpret(plugin)

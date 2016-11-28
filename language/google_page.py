@@ -11,8 +11,8 @@ class GooglePage(object):
     summary_all = soup.findAll(attrs={'class': re.compile(r"_[a-zA-Z]{3}")})
     try:
       summaries =  [summary_item.text for summary_item in summary_all if "Wikipedia" in summary_item.text]
-      self.summary = summaries[-1].replace("Wikipedia", "")
-      if self.summary.split(" ") < 3:
+      self.summary = summaries[-1].split(" - ")[0].replace("Wikipedia", "")
+      if len(self.summary.split(" ")) < 6:
         self.summary = summaries[0].split(".")[0:2].decode('ascii', 'ignore')
     except Exception: 
       self.summary = None

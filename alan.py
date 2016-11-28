@@ -18,7 +18,7 @@ def speak(response):
     Returns:
       None
   """
-  if sys.platform == "darwin" and len(memory.context.voice) > 0:
+  if sys.platform == "darwin" and len(context.voice) > 0:
     os.system('echo \"{}\" | say -v {}'.format(response, memory.context.voice))
   elif sys.platform == "darwin":
     os.system('echo \"{}\" | say '.format(response))
