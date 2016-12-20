@@ -1,39 +1,10 @@
 import json
-import gnureadline
+from os import system
 
-class colors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+from config_utils import *
 
-class MyCompleter(object):  # Custom completer
 
-  def __init__(self, options):
-    self.options = sorted(options)
-
-  def complete(self, text, state):
-    if state == 0:  # on first trigger, build possible matches
-      if text:  # cache matches (entries that start with entered text)
-        self.matches = [s for s in self.options 
-                          if s and s.startswith(text.lower())]
-      else:  # no text entered, all matches possible
-        self.matches = self.options[:]
-
-      # return match indexed by state
-      try: 
-        return self.matches[state]
-      except IndexError:
-        return None
-
-with open('voices.json') as f:
-  data = json.load(f)
-
-alan_logo = str(
+ALAN_LOGO = str(
 "           _               ____        _    \n"
 "     /\   | |             |  _ \      | |   \n"
 "    /  \  | | __ _ _ __   | |_) | ___ | |_  \n"
@@ -42,39 +13,36 @@ alan_logo = str(
 " /_/    \_\_|\__,_|_| |_| |____/ \___/ \__| \n"
 "                                            \n")
 if __name__ in '__main__':
-  print colors.OKGREEN + "Welcome to the Alan CLI installer!\n\n{}".format(alan_logo)
+
+  
+  with open('voices.json') as f:
+    # Open available languages/voices file
+    languages_and_voices = json.load(f)
+
+  # Welcome prompt
+  welcome(ALAN_LOGO)
   
   # Prompt for Owner
-  owner = raw_input("Before we begin, what should I call you?    " + colors.ENDC)
-  print(colors.OKBLUE + "\nNice to meet you, {}\n".format(owner))
-  
-  # Prompt for Name
-  bot = raw_input(colors.OKGREEN + "What would you like to call me?    " + colors.ENDC)
-  print(colors.OKGREEN + "\nGreat! I'll answer to " + colors.OKBLUE + "{}".format(bot) + colors.OKGREEN + " from now on.\n\n" + colors.ENDC)
+  owner = get_owner()
 
+  # Prompt for Bot Name
+  bot = get_name()
+   
   # Prompt for Language
-  print(colors.WARNING + "What language is easiest to understand?\n")
-  known_languages = sorted([key for key in data])
-  completer = MyCompleter(known_languages)
-  gnureadline.set_completer(completer.complete)
-  gnureadline.parse_and_bind('tab: complete')
-  language = raw_input("[Press Tab] >>> " + colors.ENDC)
- 
-  # Get available voices 
-  dict_voices = zip(data[language])
-  known_voices = sorted([key[0].lower() for key in dict_voices])
-  string_voices = " ".join(data[language])
-  print(known_voices)
-  print(colors.WARNING + "\nPlease select my voice: \n{}\n".format(string_voices))
-  voice_completer = MyCompleter(known_voices)
-  gnureadline.set_completer(voice_completer.complete)
-  gnureadline.parse_and_bind('tab: complete')
-  voice = raw_input("[Press Tab] >>> " + colors.ENDC)
-  
-  print colors.HEADER + \
-    "\nHere is what I have: \n\n  " + \
-    "Your Name: {}\n  My Name: {}\n  Language: {}\n  Voice: {}\n\n".format(owner.title(), bot.title(), language.title(), voice.title()) + colors.ENDC
+  language = get_language(languages_and_voices)
 
+  # Get available voices
+  voice = get_voice(languages_and_voices, language)
+
+  confirmation_message = "\nHere is what I have: \n\n" + \
+    " - Your Name: {}\n".format(owner.title()) + \
+    " - My Name: {}\n".format(bot.title()) + \
+    " - Language: {}\n".format(language.title()) + \
+    " - Voice: {}\n\n".format(voice.title())
+
+  print colors.HEADER + confirmation_message + colors.ENDC
+  system('say -v "{}" "{}"'.format(voice.title(), confirmation_message))
+  
   alan_json = {
     "owner": owner,
     "name": bot,
@@ -82,6 +50,8 @@ if __name__ in '__main__':
     "language": language,
     "wake_phrase": "wake up"
   }
+
+
 
   with open("config.json", "w") as config:
     json.dump(alan_json, config, sort_keys = True, indent = 4, ensure_ascii=False)
