@@ -51,7 +51,5 @@ if __name__ in '__main__':
     "wake_phrase": "wake up"
   }
 
-
-
   with open("config.json", "w") as config:
     json.dump(alan_json, config, sort_keys = True, indent = 4, ensure_ascii=False)

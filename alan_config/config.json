@@ -1,7 +1,7 @@
 {
-    "language": "spanish", 
+    "language": "english", 
     "name": "Alan", 
     "owner": "Jordan", 
-    "voice": "Jorge", 
+    "voice": "Alex", 
     "wake_phrase": "wake up"
 }
