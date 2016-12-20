@@ -64,7 +64,6 @@ if __name__ in '__main__':
   dict_voices = zip(data[language])
   known_voices = sorted([key[0].lower() for key in dict_voices])
   string_voices = " ".join(data[language])
-  print(known_voices)
   print(colors.WARNING + "\nPlease select my voice: \n{}\n".format(string_voices))
   voice_completer = MyCompleter(known_voices)
   gnureadline.set_completer(voice_completer.complete)
