@@ -1,0 +1,33 @@
+{
+  "english": [
+    "Alex", "Fred", "Samantha", "Victoria",
+    "Daniel", "Fiona", "Moira", "Tessa",
+    "Veena", "Karen"
+  ],
+  "italian": ["Alice","Luca"],
+  "swedish": ["Alva"],
+  "french": ["Amelie","Thomas"],
+  "german": ["Anna"],
+  "hebrew": ["Carmit"],
+  "indonesian": ["Damayanti"],
+  "spanish": ["Diego", "Jorge", "Juan", "Monica", "Paulina"],
+  "dutch": ["Ellen"],
+  "romanian": ["Ioana"],
+  "portuguese": ["Joana", "Luciana"],
+  "thai": ["Kanya"],
+  "japanese": ["Kyoko"],
+  "slovak": ["Laura"],
+  "hindi": ["Lekha"],
+  "arabic": ["Maged"],
+  "hungarian": ["Mariska"],
+  "greek": ["Melina"],
+  "russian": ["Milena", "Yuri"],
+  "danish": ["Sara"],
+  "finnish": ["Satu"],
+  "chinese": ["Mei-Jia", "Sin-ji", "Ting-Ting"],
+  "nl": ["Xander"],
+  "turkish": ["Yelda"],
+  "korean": ["Yuna"],
+  "polish": ["Zosia"],
+  "czech": ["Zuzana"]
+}
