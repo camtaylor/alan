@@ -1,0 +1,15 @@
+{
+  "name": "wallet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "wallet.js",
+  "dependencies": {
+    "web3": "^0.18.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "camtaylor",
+  "license": "ISC"
+}

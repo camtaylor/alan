@@ -369,7 +369,6 @@ def change_context(sentence):
 
 # This dictionary is used as a dispatcher. The verb is the key and the function that is called is the value.
 actions_dictionary = {
-
   "go": open_url, 
   "show": display_picture,
   "help": manual,
@@ -389,6 +388,7 @@ actions_dictionary = {
   "learn": learn_a_task,
   "teach": teach_a_task,
   "change": change_context,
+  "open": run_a_plugin,
 }
 
 

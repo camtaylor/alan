@@ -36,6 +36,7 @@ run_commands = {
   "background": "background.sh",
   "server": "server.js",
   "google": "google.py",
+  "wallet": "wallet.js"
 }
 
 
